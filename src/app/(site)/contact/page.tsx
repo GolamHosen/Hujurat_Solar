@@ -53,8 +53,9 @@ export default function ContactPage() {
             <li className="flex items-start gap-3">
               <MapPin className="mt-0.5 h-5 w-5 text-brand-dark" />
               <div>
-                <p className="text-sm font-semibold text-slate-900">Showroom</p>
+                <p className="text-sm font-semibold text-slate-900">Office / Showroom</p>
                 <p className="text-sm text-slate-600">
+                  {siteConfig.streetAddress},<br />
                   {siteConfig.addressLocality}, {siteConfig.addressRegion} {siteConfig.postalCode}
                 </p>
               </div>

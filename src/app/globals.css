@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --color-brand: #f5a524;
-  --color-brand-dark: #d6860f;
-  --color-ink: #0b1220;
+  --color-brand: #FFB71B;
+  --color-brand-dark: #FFB21C;
+  --color-ink: #061225;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
@@ -43,6 +43,23 @@ h1, h2, h3, h4, .font-display {
   background-image: linear-gradient(rgba(11, 18, 32, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(11, 18, 32, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+/* Hero section - golden energy network grid at the bottom */
+.hero-section .bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 178, 28, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 178, 28, 0.12) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Make the opacity utility work with single-digit values */
+.opacity-8 {
+  opacity: 0.08;
+}
+
+.opacity-12 {
+  opacity: 0.12;
 }
 
 ::selection {

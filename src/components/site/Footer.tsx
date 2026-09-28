@@ -76,6 +76,7 @@ export default function Footer() {
             <li className="flex items-start gap-2.5">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
               <span>
+                {siteConfig.streetAddress},<br />
                 {siteConfig.addressLocality}, {siteConfig.addressRegion} {siteConfig.postalCode}
               </span>
             </li>
@@ -109,9 +110,6 @@ export default function Footer() {
             </Link>
             <Link href="/areas-we-service" className="hover:text-brand">
               Areas We Service
-            </Link>
-            <Link href="/dashboard/login" className="hover:text-brand">
-              Admin
             </Link>
           </div>
         </div>

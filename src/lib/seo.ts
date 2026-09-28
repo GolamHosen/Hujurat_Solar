@@ -83,6 +83,7 @@ export function localBusinessSchema() {
     foundingDate: siteConfig.founded,
     address: {
       "@type": "PostalAddress",
+      streetAddress: siteConfig.streetAddress,
       addressLocality: siteConfig.addressLocality,
       addressRegion: siteConfig.addressRegion,
       postalCode: siteConfig.postalCode,
