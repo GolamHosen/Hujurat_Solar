@@ -56,6 +56,13 @@ export function organizationSchema() {
         areaServed: "AU",
         availableLanguage: ["English"],
       },
+      {
+        "@type": "ContactPoint",
+        telephone: siteConfig.phoneMobile,
+        contactType: "sales",
+        areaServed: "AU",
+        availableLanguage: ["English"],
+      },
     ],
   };
 }

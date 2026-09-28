@@ -81,7 +81,14 @@ export default function Footer() {
             </li>
             <li className="flex items-center gap-2.5">
               <Phone className="h-4 w-4 shrink-0 text-brand" />
-              <a href={`tel:${siteConfig.phone}`}>{siteConfig.phoneDisplay}</a>
+              <div className="flex flex-col">
+                <a href={`tel:${siteConfig.phone}`} className="hover:text-white transition">
+                  {siteConfig.phoneDisplay} <span className="text-xs text-slate-500">(Office)</span>
+                </a>
+                <a href={`tel:${siteConfig.phoneMobile}`} className="hover:text-white transition text-xs text-slate-400 mt-0.5">
+                  {siteConfig.phoneMobileDisplay} <span className="text-slate-500">(Mobile)</span>
+                </a>
+              </div>
             </li>
             <li className="flex items-center gap-2.5">
               <Mail className="h-4 w-4 shrink-0 text-brand" />

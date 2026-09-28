@@ -52,13 +52,27 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
-          <a href={`tel:${siteConfig.phone}`} className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-            <Phone className="h-4 w-4 text-brand-dark" />
-            {siteConfig.phoneDisplay}
-          </a>
+          <div className="flex flex-col items-end leading-tight">
+            <a
+              href={`tel:${siteConfig.phone}`}
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 transition hover:text-brand-dark"
+              title="Call Office"
+            >
+              <Phone className="h-3 w-3 text-brand-dark" />
+              <span>{siteConfig.phoneDisplay}</span>
+            </a>
+            <a
+              href={`tel:${siteConfig.phoneMobile}`}
+              className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-slate-600 transition hover:text-brand-dark"
+              title="Call Mobile"
+            >
+              <Phone className="h-3 w-3 text-brand-dark" />
+              <span>{siteConfig.phoneMobileDisplay}</span>
+            </a>
+          </div>
           <Link
             href="/contact"
-            className="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
+            className="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark shrink-0"
           >
             Get a Free Quote
           </Link>
@@ -94,10 +108,29 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-              <a href={`tel:${siteConfig.phone}`} className="mt-2 flex items-center gap-2 px-3 text-sm font-semibold text-slate-800">
-                <Phone className="h-4 w-4 text-brand-dark" />
-                {siteConfig.phoneDisplay}
-              </a>
+              <div className="mt-2 flex flex-col gap-2 rounded-xl border border-slate-200/80 bg-slate-50/70 p-3">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Call Us</span>
+                <a
+                  href={`tel:${siteConfig.phone}`}
+                  className="flex items-center justify-between text-sm font-semibold text-slate-800 hover:text-brand-dark"
+                >
+                  <span className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-brand-dark" />
+                    {siteConfig.phoneDisplay}
+                  </span>
+                  <span className="text-xs font-normal text-slate-500">Office</span>
+                </a>
+                <a
+                  href={`tel:${siteConfig.phoneMobile}`}
+                  className="flex items-center justify-between text-sm font-semibold text-slate-800 hover:text-brand-dark"
+                >
+                  <span className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-brand-dark" />
+                    {siteConfig.phoneMobileDisplay}
+                  </span>
+                  <span className="text-xs font-normal text-slate-500">Mobile</span>
+                </a>
+              </div>
               <Link
                 href="/contact"
                 onClick={() => setOpen(false)}

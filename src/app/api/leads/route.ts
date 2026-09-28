@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { leads } from "@/db/schema";
 import { leadFormSchema } from "@/lib/validation";
 import { consumeRateLimit, getClientIp } from "@/lib/rate-limit";
+import { sendLeadEmails } from "@/lib/email";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -82,6 +83,13 @@ export async function POST(request: NextRequest) {
       message: data.message,
       source: data.source,
     });
+
+    // Trigger SMTP emails (admin notification + client confirmation)
+    try {
+      await sendLeadEmails(data);
+    } catch (emailError) {
+      console.error("[api/leads] Error dispatching lead emails:", emailError);
+    }
 
     // Never echo the stored row: it holds PII and internal identifiers.
     return NextResponse.json({ ok: true }, { status: 201 });

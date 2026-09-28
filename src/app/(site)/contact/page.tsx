@@ -31,9 +31,14 @@ export default function ContactPage() {
               <Phone className="mt-0.5 h-5 w-5 text-brand-dark" />
               <div>
                 <p className="text-sm font-semibold text-slate-900">Phone</p>
-                <a href={`tel:${siteConfig.phone}`} className="text-sm text-slate-600">
-                  {siteConfig.phoneDisplay}
-                </a>
+                <div className="flex flex-col gap-1 mt-0.5">
+                  <a href={`tel:${siteConfig.phone}`} className="text-sm text-slate-600 hover:text-brand-dark transition">
+                    {siteConfig.phoneDisplay} <span className="text-xs text-slate-400">(Office)</span>
+                  </a>
+                  <a href={`tel:${siteConfig.phoneMobile}`} className="text-sm text-slate-600 hover:text-brand-dark transition">
+                    {siteConfig.phoneMobileDisplay} <span className="text-xs text-slate-400">(Mobile)</span>
+                  </a>
+                </div>
               </div>
             </li>
             <li className="flex items-start gap-3">
