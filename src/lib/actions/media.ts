@@ -204,6 +204,13 @@ export async function uploadMediaAction(formData: FormData): Promise<void> {
       rejectUpload("upload_failed");
     }
   } else {
+    if (process.env.VERCEL) {
+      console.error(
+        "[media] File uploads on Vercel require Cloudinary configuration because the serverless filesystem is read-only. Please set CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Project Settings -> Environment Variables.",
+      );
+      rejectUpload("upload_failed");
+    }
+
     await mkdir(UPLOAD_DIR, { recursive: true });
     // The client never chooses the on-disk name.
     const filename = `${Date.now()}-${crypto.randomUUID()}${detected.extension}`;

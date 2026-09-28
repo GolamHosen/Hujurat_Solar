@@ -111,7 +111,7 @@ export async function setSessionCookie(payload: SessionPayload): Promise<void> {
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
     maxAge: getSessionTtlSeconds(),
   });
@@ -123,7 +123,7 @@ export async function clearSessionCookie(): Promise<void> {
   cookieStore.set(SESSION_COOKIE, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
     maxAge: 0,
   });

@@ -25,7 +25,16 @@ function imageRemotePatterns(): { protocol: "https"; hostname: string; pathname:
     "**.supabase.co",
     "**.supabase.in",
     "res.cloudinary.com",
+    "**.vercel.app",
   ]);
+
+  if (process.env.VERCEL_URL) {
+    try {
+      hostnames.add(new URL(`https://${process.env.VERCEL_URL}`).hostname);
+    } catch {
+      hostnames.add(process.env.VERCEL_URL);
+    }
+  }
 
   for (const entry of (process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? "").split(",")) {
     const hostname = entry.trim();
@@ -35,11 +44,21 @@ function imageRemotePatterns(): { protocol: "https"; hostname: string; pathname:
   return [...hostnames].map((hostname) => ({ protocol: "https" as const, hostname, pathname: "/**" }));
 }
 
-/** Extra origins allowed to invoke Server Actions (needed only behind a proxy/CDN). */
-const serverActionOrigins = (process.env.SERVER_ACTION_ALLOWED_ORIGINS ?? "")
+/** Extra origins allowed to invoke Server Actions (needed behind a proxy/CDN and on Vercel preview URLs). */
+const serverActionOriginsList = (process.env.SERVER_ACTION_ALLOWED_ORIGINS ?? "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+// Always permit *.vercel.app for Vercel preview branches
+if (process.env.VERCEL) {
+  serverActionOriginsList.push("*.vercel.app");
+  if (process.env.VERCEL_URL) {
+    serverActionOriginsList.push(process.env.VERCEL_URL);
+  }
+}
+
+const serverActionOrigins = [...new Set(serverActionOriginsList)];
 
 /**
  * Security headers applied to every response. The Content-Security-Policy is
