@@ -26,3 +26,7 @@ tsconfig.tsbuildinfo
 *.pem
 *.key
 
+# Security review documentation
+/SECURITY.md
+/security.md
+
