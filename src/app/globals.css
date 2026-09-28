@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+:root {
+  --color-brand: #f5a524;
+  --color-brand-dark: #d6860f;
+  --color-ink: #0b1220;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --color-brand: var(--color-brand);
+  --color-brand-dark: var(--color-brand-dark);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+.section-container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.bg-grid {
+  background-image: linear-gradient(rgba(11, 18, 32, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 18, 32, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #0b1220;
+}
+
+.prose-hujurat {
+  color: #1e293b;
+  line-height: 1.75;
+}
+.prose-hujurat p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+.prose-hujurat h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  color: #0b1220;
+}
+.prose-hujurat h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: #0b1220;
+}
+
+/*
+ * Respect the user's OS-level motion preference.
+ * Layers with Framer Motion:
+ * When reduced motion is preferred, we immediately force full opacity and clear transforms
+ * on [data-reveal] elements via CSS !important so content is never hidden, delayed,
+ * or jarring for users with vestibular preferences, while avoiding any SSR hydration mismatch.
+ * This also covers CSS transitions and any animation not driven by Framer Motion.
+ * Note it must override the global `scroll-behavior: smooth` set above.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+

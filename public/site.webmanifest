@@ -1,0 +1,20 @@
+{
+  "name": "Hujurat Solar Supply & Install",
+  "short_name": "Hujurat Solar",
+  "description": "Premium residential and commercial solar, battery storage and monitoring across Sydney and Western Sydney.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b1220",
+  "lang": "en-AU",
+  "categories": ["business", "utilities"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
