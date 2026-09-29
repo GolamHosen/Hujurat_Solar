@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Pencil, Trash2 } from "lucide-react";
 import { getAllServices } from "@/lib/queries";
 import { createServiceAction, deleteServiceAction } from "@/lib/actions/services";
+import ImageUploadField from "@/components/dashboard/ImageUploadField";
 
 export default async function DashboardServicesPage() {
   const services = await getAllServices();
@@ -58,7 +59,7 @@ export default async function DashboardServicesPage() {
               <input name="icon" placeholder="Icon (e.g. sun, battery)" className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
               <input name="order" type="number" placeholder="Order" className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             </div>
-            <input name="heroImage" placeholder="Hero image URL" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+            <ImageUploadField name="heroImage" label="Hero image" placeholder="Hero image URL" />
             <input name="seoTitle" placeholder="SEO title" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <input name="seoDescription" placeholder="SEO meta description" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <select name="status" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">

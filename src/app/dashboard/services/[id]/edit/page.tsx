@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { services } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { updateServiceAction } from "@/lib/actions/services";
+import ImageUploadField from "@/components/dashboard/ImageUploadField";
 
 export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,7 +26,7 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
             <input name="icon" defaultValue={service.icon} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <input name="order" type="number" defaultValue={service.order} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
           </div>
-          <input name="heroImage" defaultValue={service.heroImage ?? ""} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+          <ImageUploadField name="heroImage" label="Hero image" defaultValue={service.heroImage ?? ""} />
           <input name="seoTitle" defaultValue={service.seoTitle ?? ""} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
           <input name="seoDescription" defaultValue={service.seoDescription ?? ""} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
           <select name="status" defaultValue={service.status} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">

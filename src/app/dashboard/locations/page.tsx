@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Pencil, Trash2 } from "lucide-react";
 import { getAllLocations } from "@/lib/queries";
 import { createLocationAction, deleteLocationAction } from "@/lib/actions/locations";
+import ImageUploadField from "@/components/dashboard/ImageUploadField";
 
 export default async function DashboardLocationsPage() {
   const locations = await getAllLocations();
@@ -58,7 +59,7 @@ export default async function DashboardLocationsPage() {
             </div>
             <input name="blurb" placeholder="Short blurb" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <textarea name="description" placeholder="Full description" rows={3} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
-            <input name="heroImage" placeholder="Hero image URL" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+            <ImageUploadField name="heroImage" label="Hero image" placeholder="Hero image URL" />
             <input name="seoTitle" placeholder="SEO title" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <input name="seoDescription" placeholder="SEO meta description" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <select name="status" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">

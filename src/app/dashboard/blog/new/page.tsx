@@ -1,4 +1,5 @@
 import { createBlogPostAction } from "@/lib/actions/blog";
+import ImageUploadField from "@/components/dashboard/ImageUploadField";
 
 export default function DashboardBlogNewPage() {
   return (
@@ -15,7 +16,7 @@ export default function DashboardBlogNewPage() {
           <input name="category" placeholder="Category (e.g. Solar Tips)" className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
           <input name="tags" placeholder="Tags (comma separated)" className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         </div>
-        <input name="coverImage" placeholder="Cover image URL" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+        <ImageUploadField name="coverImage" label="Cover image" placeholder="Cover image URL" />
         <input name="authorName" placeholder="Author name" defaultValue="Hujurat Solar Team" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         <input name="seoTitle" placeholder="SEO title" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         <input name="seoDescription" placeholder="SEO meta description" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />

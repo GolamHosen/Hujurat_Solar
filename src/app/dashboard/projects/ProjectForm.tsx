@@ -1,3 +1,6 @@
+"use client";
+
+import ImageUploadField from "@/components/dashboard/ImageUploadField";
 import type { projects, locations } from "@/db/schema";
 
 type Project = typeof projects.$inferSelect;
@@ -128,8 +131,12 @@ export default function ProjectForm({
           <input name="customerName" defaultValue={project?.customerName ?? ""} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         </div>
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">Featured image URL</label>
-          <input name="featuredImage" defaultValue={project?.featuredImage ?? ""} placeholder="/uploads/your-image.jpg" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+          <ImageUploadField
+            name="featuredImage"
+            label="Featured image"
+            defaultValue={project?.featuredImage ?? ""}
+            placeholder="/uploads/your-image.jpg"
+          />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getBlogPostBySlug } from "@/lib/queries";
 import { updateBlogPostAction } from "@/lib/actions/blog";
+import ImageUploadField from "@/components/dashboard/ImageUploadField";
 import { db } from "@/db";
 import { blogPosts } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -31,7 +32,7 @@ export default async function DashboardBlogEditPage({ params }: { params: Promis
           <input name="category" defaultValue={post.category ?? ""} placeholder="Category" className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
           <input name="tags" defaultValue={(post.tags ?? []).join(", ")} placeholder="Tags (comma separated)" className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         </div>
-        <input name="coverImage" defaultValue={post.coverImage ?? ""} placeholder="Cover image URL" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
+        <ImageUploadField name="coverImage" label="Cover image" defaultValue={post.coverImage ?? ""} placeholder="Cover image URL" />
         <input name="authorName" defaultValue={post.authorName} placeholder="Author name" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         <input name="seoTitle" defaultValue={post.seoTitle ?? ""} placeholder="SEO title" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
         <input name="seoDescription" defaultValue={post.seoDescription ?? ""} placeholder="SEO meta description" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
