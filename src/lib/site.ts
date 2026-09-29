@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Hujurat Solar Supply & Install",
   shortName: "Hujurat Solar",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.hujuratsolar.com.au",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://hujuratsolar.com",
   description:
     "Hujurat Solar Supply & Install designs and installs premium residential and commercial solar, battery storage and monitoring systems across Sydney and Western Sydney.",
   phone: "+61 2 7258 0676",
