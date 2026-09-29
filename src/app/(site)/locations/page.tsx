@@ -32,7 +32,7 @@ export default async function LocationsPage() {
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {locations.map((location) => (
-            <Link key={location.id} href={`/locations/${location.slug}`} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <Link key={location.id} href={`/locations/${location.slug}`} prefetch={true} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
               <div className="relative h-40 w-full">
                 <Image src={location.heroImage?.url || "/images/location-suburb.jpg"} alt={location.heroImage?.alt || location.name} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width:1024px) 33vw, 100vw" />
               </div>

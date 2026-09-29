@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { services } from "@/db/schema";
@@ -35,6 +35,8 @@ export async function createServiceAction(formData: FormData) {
   await db.insert(services).values(buildValues(formData));
   revalidatePath("/dashboard/services");
   revalidatePath("/services");
+  revalidateTag("services");
+  revalidateTag("cms");
   redirect("/dashboard/services");
 }
 
@@ -47,6 +49,8 @@ export async function updateServiceAction(id: number, formData: FormData) {
   await db.update(services).set(buildValues(formData)).where(eq(services.id, serviceId));
   revalidatePath("/dashboard/services");
   revalidatePath("/services");
+  revalidateTag("services");
+  revalidateTag("cms");
   redirect("/dashboard/services");
 }
 
@@ -59,4 +63,6 @@ export async function deleteServiceAction(id: number) {
   await db.delete(services).where(eq(services.id, serviceId));
   revalidatePath("/dashboard/services");
   revalidatePath("/services");
+  revalidateTag("services");
+  revalidateTag("cms");
 }

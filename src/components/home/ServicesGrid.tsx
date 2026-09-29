@@ -16,7 +16,7 @@ export default function ServicesGrid({ services: items }: { services: Service[] 
             Full-service solar &amp; battery solutions
           </h2>
         </div>
-        <Link href="/services" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
+        <Link href="/services" prefetch={true} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
           View all services <ArrowUpRight className="h-4 w-4" />
         </Link>
       </div>
@@ -26,6 +26,7 @@ export default function ServicesGrid({ services: items }: { services: Service[] 
           <Reveal key={service.id} delay={(index % 3) * 0.08} className="h-full">
             <Link
               href={`/services/${service.slug}`}
+              prefetch={true}
               className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-brand/50 hover:shadow-lg"
             >
               <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand-dark transition group-hover:bg-brand group-hover:text-slate-950">

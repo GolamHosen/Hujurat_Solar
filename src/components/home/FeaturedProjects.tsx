@@ -15,7 +15,7 @@ export default function FeaturedProjects({ projects: items }: { projects: Projec
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-dark">Real installs, real results</p>
             <h2 className="mt-3 font-display text-3xl font-extrabold text-slate-950 sm:text-4xl">Featured projects</h2>
           </div>
-          <Link href="/projects" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
+          <Link href="/projects" prefetch={true} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
             View all projects <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>
@@ -25,6 +25,7 @@ export default function FeaturedProjects({ projects: items }: { projects: Projec
             <Reveal key={project.id} delay={index * 0.1}>
               <Link
                 href={`/projects/${project.slug}`}
+                prefetch={true}
                 className="group block h-full overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition hover:shadow-xl"
               >
                 <div className="relative h-52 w-full overflow-hidden">

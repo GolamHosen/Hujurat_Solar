@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site";
 import { getLocations, getPosts, getProjects, getServices } from "@/data/cms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86400; // Cache sitemap for 24h with ISR
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [services, locations, projects, posts] = await Promise.all([

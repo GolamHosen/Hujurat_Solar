@@ -86,14 +86,19 @@ const nextConfig: NextConfig = {
   // Catches bugs early (double-renders only in dev, zero cost in prod).
   reactStrictMode: true,
 
+  // Enable Gzip/Brotli compression for fast text transfers
+  compress: true,
+
   images: {
     // Modern formats improve Largest Contentful Paint (a Core Web Vitals ranking signal).
     formats: ["image/avif", "image/webp"],
     remotePatterns: imageRemotePatterns(),
   },
 
-  // ── Performance: reduce dev-server filesystem pressure ──
+  // ── Performance: reduce bundle size & module resolution overhead ──
   experimental: {
+    // Tree-shake heavy icon and animation libraries for instant page loading
+    optimizePackageImports: ["lucide-react", "framer-motion", "clsx"],
     // Opt into the Rust-based CSS/module optimizer for faster cold starts.
     webpackMemoryOptimizations: true,
     serverActions: {
@@ -113,12 +118,18 @@ const nextConfig: NextConfig = {
     return [
       { source: "/(.*)", headers: securityHeaders },
       {
-        // Uploaded media is untrusted content: never let a browser sniff a
-        // different content type or treat the file as a document.
+        // Static assets and uploaded images: cache aggressively in browser
         source: "/uploads/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Content-Security-Policy", value: "default-src 'none'; sandbox" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {

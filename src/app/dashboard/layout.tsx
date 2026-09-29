@@ -52,6 +52,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
             >
               <item.icon className="h-4 w-4" />

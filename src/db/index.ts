@@ -142,7 +142,9 @@ function createPool(connectionString: string): Pool {
     connectionString,
     max: Number(process.env.DATABASE_POOL_MAX) || DEFAULT_POOL_MAX,
     idleTimeoutMillis: 30_000,
-    connectionTimeoutMillis: 15_000,
+    connectionTimeoutMillis: 5_000,
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10_000,
   };
 
   const sslDisabled = /sslmode=disable/i.test(connectionString);

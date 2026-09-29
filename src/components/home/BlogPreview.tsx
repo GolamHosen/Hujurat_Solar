@@ -16,7 +16,7 @@ export default function BlogPreview({ posts }: { posts: Post[] }) {
             Solar guides &amp; insights
           </h2>
         </div>
-        <Link href="/blog" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
+        <Link href="/blog" prefetch={true} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
           Visit the blog <ArrowUpRight className="h-4 w-4" />
         </Link>
       </div>
@@ -26,6 +26,7 @@ export default function BlogPreview({ posts }: { posts: Post[] }) {
           <Link
             key={post.id}
             href={`/blog/${post.slug}`}
+            prefetch={true}
             className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:shadow-lg"
           >
             <div className="relative h-44 w-full overflow-hidden">

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { locations } from "@/db/schema";
@@ -35,6 +35,8 @@ export async function createLocationAction(formData: FormData) {
   await db.insert(locations).values(buildValues(formData));
   revalidatePath("/dashboard/locations");
   revalidatePath("/locations");
+  revalidateTag("locations");
+  revalidateTag("cms");
   redirect("/dashboard/locations");
 }
 
@@ -47,6 +49,8 @@ export async function updateLocationAction(id: number, formData: FormData) {
   await db.update(locations).set(buildValues(formData)).where(eq(locations.id, locationId));
   revalidatePath("/dashboard/locations");
   revalidatePath("/locations");
+  revalidateTag("locations");
+  revalidateTag("cms");
   redirect("/dashboard/locations");
 }
 
@@ -59,4 +63,6 @@ export async function deleteLocationAction(id: number) {
   await db.delete(locations).where(eq(locations.id, locationId));
   revalidatePath("/dashboard/locations");
   revalidatePath("/locations");
+  revalidateTag("locations");
+  revalidateTag("cms");
 }

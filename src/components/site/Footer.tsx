@@ -42,7 +42,7 @@ export default function Footer() {
               ["Solar Repairs", "/services/solar-repairs"],
             ].map(([label, href]) => (
               <li key={href}>
-                <Link href={href} className="transition hover:text-brand">
+                <Link href={href} prefetch={true} className="transition hover:text-brand">
                   {label}
                 </Link>
               </li>
@@ -62,7 +62,7 @@ export default function Footer() {
               ["Liverpool", "/locations/liverpool"],
             ].map(([label, href]) => (
               <li key={href}>
-                <Link href={href} className="transition hover:text-brand">
+                <Link href={href} prefetch={true} className="transition hover:text-brand">
                   {label}
                 </Link>
               </li>

@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site";
 import { organizationSchema, localBusinessSchema, websiteSchema } from "@/lib/seo";
 import JsonLd from "@/components/site/JsonLd";
+import NavigationProgress from "@/components/common/NavigationProgress";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-display", display: "swap" });
@@ -100,6 +101,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-AU" className={`${inter.variable} ${manrope.variable}`}>
       <body className="min-h-screen bg-white font-sans text-slate-900 antialiased">
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <JsonLd data={[organizationSchema(), localBusinessSchema(), websiteSchema()]} />
         {children}
       </body>

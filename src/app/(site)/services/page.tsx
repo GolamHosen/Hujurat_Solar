@@ -35,6 +35,7 @@ export default async function ServicesPage() {
             <Link
               key={service.id}
               href={`/services/${service.slug}`}
+              prefetch={true}
               className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-brand/50 hover:shadow-lg"
             >
               <div className="grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand-dark transition group-hover:bg-brand group-hover:text-slate-950">

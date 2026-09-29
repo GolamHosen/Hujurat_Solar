@@ -13,7 +13,7 @@ export default function LocationsStrip({ items }: { items: Location[] }) {
               Local solar installers near you
             </h2>
           </div>
-          <Link href="/areas-we-service" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
+          <Link href="/areas-we-service" prefetch={true} className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
             All service areas <ArrowUpRight className="h-4 w-4" />
           </Link>
         </div>
@@ -23,6 +23,7 @@ export default function LocationsStrip({ items }: { items: Location[] }) {
             <Link
               key={location.id}
               href={`/locations/${location.slug}`}
+              prefetch={true}
               className="group flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-3.5 text-sm font-medium text-slate-700 transition hover:border-brand hover:bg-brand/5 hover:text-brand-dark"
             >
               <MapPin className="h-4 w-4 text-brand-dark" />

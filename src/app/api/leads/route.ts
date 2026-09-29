@@ -84,12 +84,10 @@ export async function POST(request: NextRequest) {
       source: data.source,
     });
 
-    // Trigger SMTP emails (admin notification + client confirmation)
-    try {
-      await sendLeadEmails(data);
-    } catch (emailError) {
+    // Trigger SMTP emails in background without blocking API response
+    sendLeadEmails(data).catch((emailError) => {
       console.error("[api/leads] Error dispatching lead emails:", emailError);
-    }
+    });
 
     // Never echo the stored row: it holds PII and internal identifiers.
     return NextResponse.json({ ok: true }, { status: 201 });

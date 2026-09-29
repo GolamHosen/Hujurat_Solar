@@ -51,6 +51,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                prefetch={true}
                 className={`text-[15px] xl:text-[16px] font-semibold transition-colors duration-200 ${
                   active ? "text-[#FFB71B]" : "text-[#061225]/85 hover:text-[#FFB71B]"
                 }`}
@@ -84,6 +85,7 @@ export default function Header() {
 
           <Link
             href="/contact"
+            prefetch={true}
             className="group inline-flex items-center gap-2.5 rounded-full bg-[#061225] px-6 py-2.5 sm:py-3 text-[14px] sm:text-[15px] font-bold text-white transition-all duration-300 hover:bg-[#FFB71B] hover:text-[#061225] shadow-[0_4px_16px_rgba(6,18,37,0.2)] hover:shadow-[0_0_20px_rgba(255,183,27,0.4)] shrink-0"
           >
             <span>Get a Free Quote</span>
@@ -117,6 +119,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={true}
                   onClick={() => setOpen(false)}
                   className="rounded-xl px-4 py-3 text-base font-semibold text-[#061225] hover:bg-slate-50 hover:text-[#FFB71B]"
                 >
@@ -150,6 +153,7 @@ export default function Header() {
               </div>
               <Link
                 href="/contact"
+                prefetch={true}
                 onClick={() => setOpen(false)}
                 className="mt-3 rounded-full bg-[#061225] px-6 py-3.5 text-center text-sm font-bold text-white shadow-md hover:bg-[#FFB71B] hover:text-[#061225]"
               >
