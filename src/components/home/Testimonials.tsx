@@ -29,7 +29,7 @@ export default function Testimonials({ items }: { items: Testimonial[] }) {
                 <p className="text-xs text-slate-500">{testimonial.suburb}</p>
               </div>
               <div className="flex gap-0.5">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
+                {Array.from({ length: Math.max(0, Math.min(5, Math.round(Number(testimonial.rating) || 5))) }).map((_, i) => (
                   <Star key={i} className="h-3.5 w-3.5 fill-brand text-brand" />
                 ))}
               </div>

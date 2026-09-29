@@ -1,5 +1,7 @@
+type JsonLdItem = Record<string, unknown> | null | undefined;
+
 type JsonLdProps = {
-  data: Record<string, unknown> | Record<string, unknown>[];
+  data: JsonLdItem | JsonLdItem[];
 };
 
 /**
@@ -21,7 +23,11 @@ function serialiseJsonLd(data: unknown): string {
 }
 
 export default function JsonLd({ data }: JsonLdProps) {
-  const items = Array.isArray(data) ? data : [data];
+  const rawItems = Array.isArray(data) ? data : [data];
+  const items = rawItems.filter((item): item is Record<string, unknown> => item !== null && item !== undefined && typeof item === "object");
+
+  if (items.length === 0) return null;
+
   return (
     <>
       {items.map((item, index) => (

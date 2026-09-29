@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import gsap from "gsap";
 import {
   ArrowRight,
   ShieldCheck,
@@ -39,49 +38,57 @@ export default function Hero() {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const ctx = gsap.context(() => {
-      if (glowRef.current) {
-        gsap.to(glowRef.current, {
-          scale: 1.25,
-          opacity: 0.75,
-          duration: 4,
+    let ctx: { revert: () => void } | undefined;
+
+    import("gsap").then(({ default: gsap }) => {
+      if (!containerRef.current) return;
+
+      ctx = gsap.context(() => {
+        if (glowRef.current) {
+          gsap.to(glowRef.current, {
+            scale: 1.25,
+            opacity: 0.75,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+        }
+
+        gsap.to(".floating-badge", {
+          y: -8,
+          rotation: 0.5,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut",
+          stagger: 0.6,
+        });
+
+        // Animate the golden arc glow lines
+        gsap.to(".hero-arc-glow", {
+          opacity: 0.95,
+          duration: 2.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          stagger: 0.4,
+        });
+
+        // Grid lines subtle pulse
+        gsap.to(".hero-grid-lines", {
+          opacity: 0.25,
+          duration: 3,
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
         });
-      }
+      }, containerRef);
+    });
 
-      gsap.to(".floating-badge", {
-        y: -8,
-        rotation: 0.5,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut",
-        stagger: 0.6,
-      });
-
-      // Animate the golden arc glow lines
-      gsap.to(".hero-arc-glow", {
-        opacity: 0.95,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: 0.4,
-      });
-
-      // Grid lines subtle pulse
-      gsap.to(".hero-grid-lines", {
-        opacity: 0.25,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
+    return () => {
+      ctx?.revert();
+    };
   }, []);
 
   return (

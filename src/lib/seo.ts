@@ -140,15 +140,24 @@ export function localBusinessSchema() {
  * `#business` @id with localBusinessSchema so search engines merge the rating
  * into the same entity. Emit on pages that render real customer reviews.
  */
-export function aggregateRatingSchema(params: { ratingValue: number; reviewCount: number }) {
+export function aggregateRatingSchema(params?: { ratingValue?: number; reviewCount?: number }) {
+  const ratingValue =
+    typeof params?.ratingValue === "number" && Number.isFinite(params.ratingValue)
+      ? Number(params.ratingValue.toFixed(1))
+      : 5.0;
+  const reviewCount =
+    typeof params?.reviewCount === "number" && Number.isInteger(params.reviewCount) && params.reviewCount > 0
+      ? params.reviewCount
+      : 1;
+
   return {
     "@context": "https://schema.org",
     "@type": ["SolarEnergyContractor", "RoofingContractor"],
     "@id": `${siteConfig.url}/#business`,
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: Number(params.ratingValue.toFixed(1)),
-      reviewCount: params.reviewCount,
+      ratingValue,
+      reviewCount,
       bestRating: 5,
       worstRating: 1,
     },
@@ -256,16 +265,17 @@ export function serviceSchema(params: {
   };
 }
 
-export function faqSchema(items: { question: string; answer: string }[]) {
+export function faqSchema(items?: { question: string; answer: string }[]) {
+  if (!Array.isArray(items) || items.length === 0) return null;
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: items.map((item) => ({
       "@type": "Question",
-      name: item.question,
+      name: item.question || "",
       acceptedAnswer: {
         "@type": "Answer",
-        text: item.answer,
+        text: item.answer || "",
       },
     })),
   };
