@@ -4,6 +4,7 @@ import ServicesGrid from "@/components/home/ServicesGrid";
 import FeaturedProjects from "@/components/home/FeaturedProjects";
 import LocationsStrip from "@/components/home/LocationsStrip";
 import Testimonials from "@/components/home/Testimonials";
+import FAQSection, { HOMEPAGE_FAQS } from "@/components/home/FAQSection";
 import BlogPreview from "@/components/home/BlogPreview";
 import CTASection from "@/components/home/CTASection";
 import JsonLd from "@/components/site/JsonLd";
@@ -14,7 +15,7 @@ import {
   getTestimonials,
   getPosts,
 } from "@/data/cms";
-import { buildMetadata, aggregateRatingSchema } from "@/lib/seo";
+import { buildMetadata, aggregateRatingSchema, faqSchema } from "@/lib/seo";
 import { average } from "@/lib/format";
 
 export const metadata = buildMetadata({
@@ -38,15 +39,19 @@ export default async function HomePage() {
 
   return (
     <>
-      {reviewCount > 0 && (
-        <JsonLd data={aggregateRatingSchema({ ratingValue: averageRating, reviewCount })} />
-      )}
+      <JsonLd
+        data={[
+          ...(reviewCount > 0 ? [aggregateRatingSchema({ ratingValue: averageRating, reviewCount })] : []),
+          faqSchema(HOMEPAGE_FAQS),
+        ]}
+      />
       <Hero />
       <EnergyFlow />
       <ServicesGrid services={services} />
       <FeaturedProjects projects={featuredProjects} />
       <LocationsStrip items={locations.slice(0, 8)} />
       <Testimonials items={testimonials} />
+      <FAQSection />
       <BlogPreview posts={blogPosts} />
       <CTASection />
     </>

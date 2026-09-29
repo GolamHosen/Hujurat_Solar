@@ -6,7 +6,7 @@ import Breadcrumbs from "@/components/site/Breadcrumbs";
 import JsonLd from "@/components/site/JsonLd";
 import LeadForm from "@/components/forms/LeadForm";
 import { getLocationBySlug, getProjects, getServices } from "@/data/cms";
-import { buildMetadata, faqSchema } from "@/lib/seo";
+import { buildMetadata, faqSchema, locationLocalBusinessSchema } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -14,8 +14,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const location = await getLocationBySlug(slug);
   if (!location) return {};
   return buildMetadata({
-    title: location.seo.title || `Solar Installer ${location.name} | Hujurat Solar`,
-    description: location.seo.description || location.blurb,
+    title: location.seo.title || `Solar Installer ${location.name} NSW | CEC Accredited | Hujurat Solar`,
+    description:
+      location.seo.description ||
+      `Top-rated solar panel and battery installations in ${location.name}, NSW. CEC-accredited installers, tier-1 equipment, free quotes, and maximum government rebates.`,
     path: `/locations/${location.slug}`,
     image: location.heroImage?.url,
   });
@@ -36,15 +38,43 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const projectsToShow = localProjects.length > 0 ? localProjects : allPublished.slice(0, 3);
 
   const faqs = [
-    { question: `Do you install solar in ${location.name}?`, answer: `Yes, ${location.name} is one of our core service areas. We regularly install residential and commercial solar and battery systems throughout ${location.name} and surrounding suburbs.` },
-    { question: "How quickly can you install?", answer: "Once your quote is approved, most residential installs are completed within 2 to 6 weeks, subject to equipment availability and network approval timeframes." },
-    { question: "Do you offer free quotes?", answer: "Yes, every quote includes a free site assessment (remote or in-person) and a fixed-price, itemised proposal." },
+    {
+      question: `Do you install residential and commercial solar systems in ${location.name}?`,
+      answer: `Yes, ${location.name} is one of our core primary service areas. We regularly design and install 6.6kW to 13.3kW residential solar systems, commercial installations, and solar battery storage across ${location.name} and surrounding suburbs.`,
+    },
+    {
+      question: `Which electricity distributor network covers ${location.name} for solar grid connection?`,
+      answer: `Most of Western Sydney and ${location.name} is serviced by the Endeavour Energy or Ausgrid electricity network. Hujurat Solar manages all connection applications, export approval limits, and bi-directional smart meter upgrades directly with your network provider.`,
+    },
+    {
+      question: `What solar and battery rebates are available to homeowners in ${location.name}, NSW?`,
+      answer: `Homeowners in ${location.name} qualify for the Federal Government Small-scale Technology Certificates (STC) discount (saving up to $2,500–$3,500 on system costs) and the NSW Peak Demand Reduction Scheme (PDRS) battery discount (saving up to $1,600–$2,400). As a CEC-accredited installer, Hujurat Solar applies all rebates upfront on your quote.`,
+    },
+    {
+      question: `Do I need local council approval to install solar panels in ${location.name}?`,
+      answer: `In almost all standard residential properties in ${location.name}, rooftop solar installations are classified as Exempt Development under NSW State Environmental Planning Policy (SEPP), meaning formal council Development Applications (DA) are not required unless your building is state heritage-listed.`,
+    },
+    {
+      question: `How quickly can you install solar in ${location.name}?`,
+      answer: `Following proposal acceptance and network pre-approval, our team completes rooftop installation within 2 to 4 weeks, with physical on-site work typically finished in a single day.`,
+    },
   ];
 
   return (
     <div>
       <Breadcrumbs items={[{ name: "Locations", path: "/locations" }, { name: location.name, path: `/locations/${location.slug}` }]} />
-      <JsonLd data={faqSchema(faqs)} />
+      <JsonLd
+        data={[
+          locationLocalBusinessSchema({
+            locationName: location.name,
+            region: location.region,
+            state: location.state,
+            path: `/locations/${location.slug}`,
+            description: location.seo.description || location.blurb,
+          }),
+          faqSchema(faqs),
+        ]}
+      />
 
       <section className="relative">
         <div className="relative h-72 w-full sm:h-96">

@@ -70,9 +70,10 @@ export function organizationSchema() {
 export function localBusinessSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "RoofingContractor",
+    "@type": ["SolarEnergyContractor", "Electrician", "RoofingContractor"],
     "@id": `${siteConfig.url}/#business`,
     name: siteConfig.name,
+    legalName: siteConfig.name,
     image: absoluteUrl(siteConfig.ogImage),
     logo: absoluteUrl(siteConfig.logo),
     url: siteConfig.url,
@@ -80,7 +81,31 @@ export function localBusinessSchema() {
     email: siteConfig.email,
     priceRange: siteConfig.priceRange,
     currenciesAccepted: "AUD",
+    paymentAccepted: ["Cash", "Credit Card", "Direct Debit", "Solar Financing"],
     foundingDate: siteConfig.founded,
+    hasCredential: [
+      {
+        "@type": "EducationalOccupationalCredential",
+        credentialCategory: "Accreditation",
+        name: "Clean Energy Council (CEC) Accredited Retailer & Installer",
+        recognizedBy: {
+          "@type": "Organization",
+          name: "Clean Energy Council Australia",
+          url: "https://www.cleanenergycouncil.org.au",
+        },
+      },
+    ],
+    knowsAbout: [
+      "Residential Solar Panel Installation Sydney",
+      "Commercial Solar Power Systems NSW",
+      "Solar Battery Storage (Sungrow, Tesla, BYD, Enphase)",
+      "Solar Inverter Fault Diagnosis and Repairs (Fronius, GoodWe, Sungrow)",
+      "NSW Peak Demand Reduction Scheme (PDRS) Battery Rebates",
+      "Federal Small-scale Technology Certificates (STC) Solar Rebate Australia",
+      "Clean Energy Council Approved Solar Equipment",
+      "Solar Panel Maintenance, Cleaning & Health Checks",
+      "Ausgrid and Endeavour Energy Grid Connections",
+    ],
     address: {
       "@type": "PostalAddress",
       streetAddress: siteConfig.streetAddress,
@@ -100,7 +125,12 @@ export function localBusinessSchema() {
       opens: oh.opens,
       closes: oh.closes,
     })),
-    areaServed: siteConfig.areaServed.map((name) => ({ "@type": "City", name })),
+    areaServed: [
+      { "@type": "State", name: "New South Wales" },
+      { "@type": "AdministrativeArea", name: "Greater Sydney" },
+      { "@type": "AdministrativeArea", name: "Western Sydney" },
+      ...siteConfig.areaServed.map((name) => ({ "@type": "City", name })),
+    ],
     sameAs: siteConfig.sameAs,
   };
 }
@@ -113,7 +143,7 @@ export function localBusinessSchema() {
 export function aggregateRatingSchema(params: { ratingValue: number; reviewCount: number }) {
   return {
     "@context": "https://schema.org",
-    "@type": "RoofingContractor",
+    "@type": ["SolarEnergyContractor", "RoofingContractor"],
     "@id": `${siteConfig.url}/#business`,
     aggregateRating: {
       "@type": "AggregateRating",
@@ -122,6 +152,51 @@ export function aggregateRatingSchema(params: { ratingValue: number; reviewCount
       bestRating: 5,
       worstRating: 1,
     },
+  };
+}
+
+/**
+ * Localized schema for specific Sydney suburbs and regions (e.g. Parramatta, Penrith, Blacktown).
+ * Boosts rankings in Google Local 3-Pack and regional search results.
+ */
+export function locationLocalBusinessSchema(params: {
+  locationName: string;
+  region?: string | null;
+  state?: string;
+  path: string;
+  description?: string | null;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["SolarEnergyContractor", "Electrician"],
+    "@id": `${siteConfig.url}${params.path}#local-service`,
+    name: `${siteConfig.name} - ${params.locationName}`,
+    url: absoluteUrl(params.path),
+    telephone: siteConfig.phone,
+    email: siteConfig.email,
+    description: params.description || `Professional CEC-accredited solar panel and battery installation services in ${params.locationName}, NSW.`,
+    areaServed: {
+      "@type": "City",
+      name: params.locationName,
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: params.region || "Greater Sydney",
+      },
+    },
+    parentOrganization: {
+      "@type": "Organization",
+      "@id": `${siteConfig.url}/#business`,
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    hasCredential: [
+      {
+        "@type": "EducationalOccupationalCredential",
+        name: "Clean Energy Council (CEC) Accredited Installer",
+      },
+    ],
+    priceRange: siteConfig.priceRange,
+    currenciesAccepted: "AUD",
   };
 }
 
@@ -167,11 +242,17 @@ export function serviceSchema(params: {
     url: absoluteUrl(params.path),
     image: params.image ? absoluteUrl(params.image) : undefined,
     provider: {
-      "@type": "Organization",
+      "@type": "SolarEnergyContractor",
+      "@id": `${siteConfig.url}/#business`,
       name: siteConfig.name,
       url: siteConfig.url,
+      telephone: siteConfig.phone,
     },
-    areaServed: siteConfig.areaServed.map((name) => ({ "@type": "City", name })),
+    areaServed: [
+      { "@type": "State", name: "New South Wales" },
+      { "@type": "AdministrativeArea", name: "Greater Sydney" },
+      ...siteConfig.areaServed.map((name) => ({ "@type": "City", name })),
+    ],
   };
 }
 
