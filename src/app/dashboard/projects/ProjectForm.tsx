@@ -303,12 +303,33 @@ export default function ProjectForm({
             </div>
           </div>
         )}
+        {/* Bottom Save Action Bar */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs text-slate-500">
+            Mandatory fields marked with <span className="text-red-500 font-bold">*</span> are required to save.
+          </p>
+          <div className="flex items-center gap-2.5">
+            <Link
+              href="/dashboard/projects"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-5 py-2 text-xs font-semibold text-white shadow hover:bg-brand-dark transition active:scale-[0.98]"
+            >
+              <Save className="h-3.5 w-3.5" />
+              {project ? "Save Changes" : "Publish Project"}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* RIGHT COLUMN: Publishing, Media, Location & SEO */}
       <div className="space-y-6">
-        {/* Card: Publishing Actions (Sticky) */}
-        <div className="sticky top-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        {/* Card: Publishing Actions */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-display text-sm font-bold text-slate-950">Publishing Controls</h3>
             <span
