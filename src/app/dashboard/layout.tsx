@@ -42,12 +42,12 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-800 bg-slate-950 text-slate-300 lg:flex">
-        <div className="flex items-center gap-2 border-b border-slate-800 px-6 py-5">
+    <div className="flex h-screen overflow-hidden bg-slate-100">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-800 bg-slate-950 text-slate-300 lg:flex h-full">
+        <div className="flex items-center gap-2 border-b border-slate-800 px-6 py-5 shrink-0">
           <span className="font-display text-base font-extrabold text-white">Hujurat Solar</span>
         </div>
-        <nav className="flex-1 space-y-1 px-3 py-5">
+        <nav className="flex-1 space-y-1 px-3 py-5 overflow-y-auto">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -59,7 +59,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             </Link>
           ))}
         </nav>
-        <div className="space-y-2 border-t border-slate-800 p-4">
+        <div className="space-y-2 border-t border-slate-800 p-4 shrink-0">
           <Link href="/" target="_blank" className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-400 hover:bg-white/5 hover:text-white">
             <ExternalLink className="h-3.5 w-3.5" /> View live site
           </Link>
@@ -71,8 +71,8 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         </div>
       </aside>
 
-      <div className="flex-1">
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 lg:px-8">
+      <div className="flex flex-1 flex-col h-full min-w-0 overflow-y-auto">
+        <header className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur px-6 py-4 lg:px-8 shrink-0">
           <div>
             <p className="text-xs text-slate-500">Welcome back,</p>
             <p className="text-sm font-semibold text-slate-900">{session.name}</p>
@@ -83,7 +83,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             </button>
           </form>
         </header>
-        <main className="px-6 py-8 lg:px-8">{children}</main>
+        <main className="flex-1 px-6 py-8 lg:px-8">{children}</main>
       </div>
     </div>
   );
