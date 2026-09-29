@@ -20,17 +20,12 @@ async function main() {
 
   await db.execute(sql`TRUNCATE TABLE project_images, project_videos, testimonials, projects, blog_posts, services, locations RESTART IDENTITY CASCADE`);
 
-  const adminEmail = process.env.ADMIN_EMAIL?.trim() || "admin@hujuratsolar.com.au";
+  const adminEmail = process.env.ADMIN_EMAIL?.trim();
+  const adminPassword = process.env.ADMIN_PASSWORD?.trim();
 
-  /**
-   * Never bake a production admin password into the repository. Production
-   * seeding requires ADMIN_PASSWORD; local development keeps a convenience
-   * default so the seed script stays runnable out of the box.
-   */
-  const adminPassword = process.env.ADMIN_PASSWORD?.trim() || (isProduction ? undefined : "HujuratSolar2024!");
-
-  if (!adminPassword) {
-    console.error("ADMIN_PASSWORD is required to seed the administrator account in production.");
+  if (!adminEmail || !adminPassword) {
+    console.error("ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required to seed the admin account.");
+    console.error("Usage: ADMIN_EMAIL=you@example.com ADMIN_PASSWORD=secret npm run seed");
     process.exit(1);
   }
 
@@ -40,12 +35,9 @@ async function main() {
     await db.insert(admins).values({
       email: adminEmail,
       passwordHash,
-      name: "Hujurat Admin",
+      name: process.env.ADMIN_NAME?.trim() || "Hujurat Admin",
     });
     console.log("Created admin user:", adminEmail);
-    if (!process.env.ADMIN_PASSWORD) {
-      console.warn("[seed] Using the development default admin password. Set ADMIN_PASSWORD before seeding production.");
-    }
   }
 
   const locationRows = await db
