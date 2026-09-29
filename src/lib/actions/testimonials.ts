@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { testimonials } from "@/db/schema";
@@ -28,8 +28,9 @@ export async function createTestimonialAction(formData: FormData) {
   await db.insert(testimonials).values(buildValues(formData));
   revalidatePath("/dashboard/testimonials");
   revalidatePath("/testimonials");
-  revalidateTag("testimonials");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("testimonials");
+  updateTag("cms");
   redirect("/dashboard/testimonials");
 }
 
@@ -42,8 +43,9 @@ export async function updateTestimonialAction(id: number, formData: FormData) {
   await db.update(testimonials).set(buildValues(formData)).where(eq(testimonials.id, testimonialId));
   revalidatePath("/dashboard/testimonials");
   revalidatePath("/testimonials");
-  revalidateTag("testimonials");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("testimonials");
+  updateTag("cms");
   redirect("/dashboard/testimonials");
 }
 
@@ -56,6 +58,7 @@ export async function deleteTestimonialAction(id: number) {
   await db.delete(testimonials).where(eq(testimonials.id, testimonialId));
   revalidatePath("/dashboard/testimonials");
   revalidatePath("/testimonials");
-  revalidateTag("testimonials");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("testimonials");
+  updateTag("cms");
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { projects, projectImages, projectVideos } from "@/db/schema";
@@ -87,8 +87,9 @@ export async function createProjectAction(formData: FormData) {
 
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
-  revalidateTag("projects");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("projects");
+  updateTag("cms");
   redirect("/dashboard/projects");
 }
 
@@ -104,8 +105,9 @@ export async function updateProjectAction(id: number, formData: FormData) {
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
   revalidatePath(`/projects/${values.slug}`);
-  revalidateTag("projects");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("projects");
+  updateTag("cms");
   redirect("/dashboard/projects");
 }
 
@@ -118,6 +120,7 @@ export async function deleteProjectAction(id: number) {
   await db.delete(projects).where(eq(projects.id, projectId));
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
-  revalidateTag("projects");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("projects");
+  updateTag("cms");
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { locations } from "@/db/schema";
@@ -35,8 +35,9 @@ export async function createLocationAction(formData: FormData) {
   await db.insert(locations).values(buildValues(formData));
   revalidatePath("/dashboard/locations");
   revalidatePath("/locations");
-  revalidateTag("locations");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("locations");
+  updateTag("cms");
   redirect("/dashboard/locations");
 }
 
@@ -46,11 +47,14 @@ export async function updateLocationAction(id: number, formData: FormData) {
   const locationId = toPositiveInt(id);
   if (!locationId) return;
 
-  await db.update(locations).set(buildValues(formData)).where(eq(locations.id, locationId));
+  const values = buildValues(formData);
+  await db.update(locations).set(values).where(eq(locations.id, locationId));
   revalidatePath("/dashboard/locations");
   revalidatePath("/locations");
-  revalidateTag("locations");
-  revalidateTag("cms");
+  revalidatePath(`/locations/${values.slug}`);
+  revalidatePath("/");
+  updateTag("locations");
+  updateTag("cms");
   redirect("/dashboard/locations");
 }
 
@@ -63,6 +67,7 @@ export async function deleteLocationAction(id: number) {
   await db.delete(locations).where(eq(locations.id, locationId));
   revalidatePath("/dashboard/locations");
   revalidatePath("/locations");
-  revalidateTag("locations");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("locations");
+  updateTag("cms");
 }

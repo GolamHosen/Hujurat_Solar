@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { blogPosts } from "@/db/schema";
@@ -43,8 +43,9 @@ export async function createBlogPostAction(formData: FormData) {
   await db.insert(blogPosts).values(buildValues(formData));
   revalidatePath("/dashboard/blog");
   revalidatePath("/blog");
-  revalidateTag("posts");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("posts");
+  updateTag("cms");
   redirect("/dashboard/blog");
 }
 
@@ -54,11 +55,14 @@ export async function updateBlogPostAction(id: number, formData: FormData) {
   const postId = toPositiveInt(id);
   if (!postId) return;
 
-  await db.update(blogPosts).set(buildValues(formData)).where(eq(blogPosts.id, postId));
+  const values = buildValues(formData);
+  await db.update(blogPosts).set(values).where(eq(blogPosts.id, postId));
   revalidatePath("/dashboard/blog");
   revalidatePath("/blog");
-  revalidateTag("posts");
-  revalidateTag("cms");
+  revalidatePath(`/blog/${values.slug}`);
+  revalidatePath("/");
+  updateTag("posts");
+  updateTag("cms");
   redirect("/dashboard/blog");
 }
 
@@ -71,6 +75,7 @@ export async function deleteBlogPostAction(id: number) {
   await db.delete(blogPosts).where(eq(blogPosts.id, postId));
   revalidatePath("/dashboard/blog");
   revalidatePath("/blog");
-  revalidateTag("posts");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("posts");
+  updateTag("cms");
 }

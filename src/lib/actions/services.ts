@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { services } from "@/db/schema";
@@ -35,8 +35,9 @@ export async function createServiceAction(formData: FormData) {
   await db.insert(services).values(buildValues(formData));
   revalidatePath("/dashboard/services");
   revalidatePath("/services");
-  revalidateTag("services");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("services");
+  updateTag("cms");
   redirect("/dashboard/services");
 }
 
@@ -46,11 +47,14 @@ export async function updateServiceAction(id: number, formData: FormData) {
   const serviceId = toPositiveInt(id);
   if (!serviceId) return;
 
-  await db.update(services).set(buildValues(formData)).where(eq(services.id, serviceId));
+  const values = buildValues(formData);
+  await db.update(services).set(values).where(eq(services.id, serviceId));
   revalidatePath("/dashboard/services");
   revalidatePath("/services");
-  revalidateTag("services");
-  revalidateTag("cms");
+  revalidatePath(`/services/${values.slug}`);
+  revalidatePath("/");
+  updateTag("services");
+  updateTag("cms");
   redirect("/dashboard/services");
 }
 
@@ -63,6 +67,7 @@ export async function deleteServiceAction(id: number) {
   await db.delete(services).where(eq(services.id, serviceId));
   revalidatePath("/dashboard/services");
   revalidatePath("/services");
-  revalidateTag("services");
-  revalidateTag("cms");
+  revalidatePath("/");
+  updateTag("services");
+  updateTag("cms");
 }
