@@ -30,9 +30,9 @@ export default function AboutPage() {
             Local solar experts, honest advice
           </h1>
           <p className="mt-5 text-slate-600">
-            Hujurat Solar Supply &amp; Install was founded in {siteConfig.founded} with a simple goal: help
+            Hujurat Solar Supply &amp; Install was founded in with a simple goal: help
             Australian households and businesses switch to solar with honest advice, quality equipment and
-            workmanship they can trust. We&apos;re based in Western Sydney and have completed hundreds of
+            workmanship they can trust. We&apos;re based in Western Sydney and have completed lots of
             residential and commercial installations across Greater Sydney.
           </p>
           <p className="mt-4 text-slate-600">
