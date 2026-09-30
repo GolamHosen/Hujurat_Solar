@@ -12,8 +12,39 @@ const ROOF_FACTORS: Record<string, number> = {
 
 export default function SolarCalculator() {
   const [monthlyBill, setMonthlyBill] = useState(280);
+  const [billInput, setBillInput] = useState("280");
   const [roofType, setRoofType] = useState<"north" | "east-west" | "south">("north");
   const [wantsBattery, setWantsBattery] = useState(true);
+
+  // Dynamically scale slider max if user enters a larger bill
+  const sliderMax = Math.max(1000, Math.ceil(monthlyBill / 100) * 100);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setBillInput(val);
+    const num = Number(val);
+    if (!isNaN(num) && num > 0) {
+      setMonthlyBill(Math.min(num, 10000));
+    }
+  };
+
+  const handleInputBlur = () => {
+    const num = Number(billInput);
+    if (isNaN(num) || num <= 0) {
+      setBillInput(String(monthlyBill));
+    } else {
+      const clamped = Math.max(10, Math.min(num, 10000));
+      setMonthlyBill(clamped);
+      setBillInput(String(clamped));
+    }
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    setMonthlyBill(val);
+    setBillInput(String(val));
+  };
+
 
   const results = useMemo(() => {
     const annualSpend = monthlyBill * 12;
@@ -65,19 +96,73 @@ export default function SolarCalculator() {
         </h2>
 
         <div className="mt-6">
-          <label className="mb-2 flex items-center justify-between text-sm font-medium text-slate-700">
-            Average monthly electricity bill
-            <span className="font-semibold text-brand-dark">${monthlyBill}</span>
-          </label>
-          <input
-            type="range"
-            min={80}
-            max={900}
-            step={10}
-            value={monthlyBill}
-            onChange={(e) => setMonthlyBill(Number(e.target.value))}
-            className="w-full accent-[#f5a524]"
-          />
+          <div className="mb-2.5 flex items-center justify-between gap-3">
+            <div>
+              <label htmlFor="monthly-bill-input" className="text-sm font-semibold text-slate-900 block">
+                Average monthly electricity bill
+              </label>
+              <span className="text-[11px] text-slate-400">
+                Type an exact amount or use the slider
+              </span>
+            </div>
+            <div className="relative flex items-center">
+              <span className="pointer-events-none absolute left-3 text-sm font-bold text-slate-400">
+                $
+              </span>
+              <input
+                id="monthly-bill-input"
+                type="number"
+                min={10}
+                max={10000}
+                step={5}
+                value={billInput}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                className="w-28 rounded-xl border border-slate-300 bg-slate-50 py-1.5 pl-7 pr-3 text-right font-display text-base font-bold text-slate-950 transition focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/20 shadow-sm"
+                placeholder="280"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <input
+              type="range"
+              min={50}
+              max={sliderMax}
+              step={10}
+              value={monthlyBill}
+              onChange={handleSliderChange}
+              aria-label="Average monthly electricity bill slider"
+              className="w-full accent-amber-500 cursor-pointer"
+            />
+            <div className="mt-1 flex justify-between text-[11px] font-medium text-slate-400">
+              <span>$50</span>
+              <span>${Math.round(sliderMax / 2)}</span>
+              <span>${sliderMax}+</span>
+            </div>
+          </div>
+
+          {/* Quick bill presets */}
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            <span className="text-[11px] font-medium text-slate-400 mr-0.5">Quick picks:</span>
+            {[150, 280, 450, 650, 900].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => {
+                  setMonthlyBill(preset);
+                  setBillInput(String(preset));
+                }}
+                className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+                  monthlyBill === preset
+                    ? "bg-brand text-slate-950 shadow-sm font-bold"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                ${preset}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-6">
@@ -120,12 +205,12 @@ export default function SolarCalculator() {
       </div>
 
       <motion.div
-        key={`${monthlyBill}-${roofType}-${wantsBattery}`}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
         className="rounded-2xl bg-slate-950 p-7 text-white"
       >
+
         <h2 className="font-display text-xl font-bold">Your estimated system</h2>
         <div className="mt-6 grid grid-cols-2 gap-4">
           <div className="rounded-xl bg-white/5 p-5">
