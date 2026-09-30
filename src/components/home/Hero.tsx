@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import {
@@ -14,11 +13,36 @@ import {
   TrendingUp,
   Home,
   Coins,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -309,25 +333,59 @@ export default function Hero() {
               {/* Outer decorative glow */}
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-[#FFB21C]/35 via-[#071A32]/60 to-transparent opacity-90 blur-2xl" />
 
-              {/* Main Image Card */}
+              {/* Main Video Card */}
               <div className="group relative overflow-hidden rounded-3xl border border-[#263247] bg-[#102039] shadow-[0_20px_50px_rgba(2,8,23,0.85)] backdrop-blur-xl">
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#020817]">
-                  <Image
-                    src="/images/hero-solar-house.jpg"
-                    alt="Premium Residential Solar Installation in Sydney by Hujurat Solar"
-                    fill
-                    priority
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    poster="/images/hero-solar-house.jpg"
+                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  >
+                    <source src="/video/hero-video.mp4" type="video/mp4" />
+                    <source src="/video/WhatsApp%20Video%202026-09-30%20at%2012.05.58.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
 
                   {/* Bottom gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#020817]/60 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#020817]/60 via-transparent to-transparent" />
+
+                  {/* Video Play/Pause & Sound Controls */}
+                  <div className="absolute bottom-3.5 right-3.5 z-20 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      aria-label={isPlaying ? "Pause video" : "Play video"}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#020817]/85 text-[#FFFFFF] backdrop-blur-md border border-[#263247] shadow-lg transition-all hover:bg-[#102039] hover:border-[#FFB71B] hover:text-[#FFB71B] active:scale-95"
+                    >
+                      {isPlaying ? (
+                        <Pause className="h-3.5 w-3.5 fill-current" />
+                      ) : (
+                        <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      aria-label={isMuted ? "Unmute video" : "Mute video"}
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-[#020817]/85 text-[#FFFFFF] backdrop-blur-md border border-[#263247] shadow-lg transition-all hover:bg-[#102039] hover:border-[#FFB71B] hover:text-[#FFB71B] active:scale-95"
+                    >
+                      {isMuted ? (
+                        <VolumeX className="h-3.5 w-3.5" />
+                      ) : (
+                        <Volume2 className="h-3.5 w-3.5 text-[#FFB71B]" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
 
+
               {/* ─── Floating Badge: Live Generation (top right of image) ─── */}
-              <div className="floating-badge pointer-events-none absolute -top-5 -right-3 z-30 hidden rounded-2xl border border-[#263247] bg-[#102039]/95 p-4 shadow-[0_12px_32px_rgba(2,8,23,0.7)] backdrop-blur-xl sm:block">
+              {/* <div className="floating-badge pointer-events-none absolute -top-5 -right-3 z-30 hidden rounded-2xl border border-[#263247] bg-[#102039]/95 p-4 shadow-[0_12px_32px_rgba(2,8,23,0.7)] backdrop-blur-xl sm:block">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#22C55E]/15 text-[#22C55E]">
                     <Zap className="h-5 w-5 fill-[#22C55E]/20 text-[#22C55E]" />
@@ -348,10 +406,10 @@ export default function Hero() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* ─── Floating Badge: Est. Power Savings (bottom center-left) ─── */}
-              <div className="floating-badge pointer-events-none absolute -bottom-6 left-4 sm:left-10 z-30 hidden rounded-2xl border border-[#FFB71B]/60 bg-[#102039]/95 p-4 shadow-[0_0_24px_rgba(255,178,28,0.22),0_12px_32px_rgba(2,8,23,0.7)] backdrop-blur-xl sm:block">
+              {/* <div className="floating-badge pointer-events-none absolute -bottom-6 left-4 sm:left-10 z-30 hidden rounded-2xl border border-[#FFB71B]/60 bg-[#102039]/95 p-4 shadow-[0_0_24px_rgba(255,178,28,0.22),0_12px_32px_rgba(2,8,23,0.7)] backdrop-blur-xl sm:block">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#FFB71B]/15 text-[#FFB71B]">
                     <Coins className="h-5 w-5 text-[#FFB71B]" />
@@ -369,10 +427,10 @@ export default function Hero() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* ─── Floating Badge: Battery Independence (bottom right) ─── */}
-              <div className="floating-badge pointer-events-none absolute -bottom-6 -right-3 z-30 hidden rounded-2xl border border-[#263247] bg-[#102039]/95 p-4 shadow-[0_12px_32px_rgba(2,8,23,0.7)] backdrop-blur-xl md:block">
+              {/* <div className="floating-badge pointer-events-none absolute -bottom-6 -right-3 z-30 hidden rounded-2xl border border-[#263247] bg-[#102039]/95 p-4 shadow-[0_12px_32px_rgba(2,8,23,0.7)] backdrop-blur-xl md:block">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#38BDF8]/15 text-[#38BDF8]">
                     <BatteryCharging className="h-5 w-5 text-[#38BDF8]" />
@@ -389,7 +447,7 @@ export default function Hero() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           </div>
         </div>
