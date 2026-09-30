@@ -66,17 +66,44 @@ function extractGalleryImages(formData: FormData, defaultTitle: string): Gallery
   const galleryJson = String(formData.get("galleryImages") || "").trim();
   if (galleryJson) {
     try {
-      const parsed = JSON.parse(galleryJson);
+      const parsed: unknown = JSON.parse(galleryJson);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed
-          .map((item, index) => {
-            const url = typeof item === "string" ? item.trim() : String(item?.url || "").trim();
-            const alt = typeof item === "object" && item?.alt !== undefined ? String(item.alt).trim() : defaultTitle;
-            const caption = typeof item === "object" && item?.caption ? String(item.caption).trim() : null;
-            const isFeatured = typeof item === "object" ? Boolean(item?.isFeatured) : false;
-            return url ? { url, alt: alt || defaultTitle, caption, order: index, isFeatured } : null;
-          })
-          .filter((item): item is GalleryImageItem => item !== null);
+        const items: GalleryImageItem[] = [];
+        for (let i = 0; i < parsed.length; i++) {
+          const item = parsed[i];
+          if (!item) continue;
+          
+          let url = "";
+          let alt = defaultTitle;
+          let caption: string | null = null;
+          let isFeatured = false;
+
+          if (typeof item === "string") {
+            url = item.trim();
+          } else if (typeof item === "object") {
+            const obj = item as Record<string, unknown>;
+            url = String(obj.url || "").trim();
+            if (obj.alt !== undefined && obj.alt !== null) {
+              const customAlt = String(obj.alt).trim();
+              if (customAlt) alt = customAlt;
+            }
+            if (obj.caption) {
+              caption = String(obj.caption).trim();
+            }
+            isFeatured = Boolean(obj.isFeatured);
+          }
+
+          if (url) {
+            items.push({
+              url,
+              alt,
+              caption,
+              order: i,
+              isFeatured,
+            });
+          }
+        }
+        return items;
       }
     } catch (e) {
       console.error("Failed to parse galleryImages JSON:", e);
@@ -89,13 +116,19 @@ function extractGalleryImages(formData: FormData, defaultTitle: string): Gallery
     .map((s) => s.trim())
     .filter(Boolean);
 
-  return imageUrls.map((url, index) => ({
-    url,
-    alt: defaultTitle,
-    caption: null,
-    order: index,
-  }));
+  const fallbackItems: GalleryImageItem[] = [];
+  for (let i = 0; i < imageUrls.length; i++) {
+    fallbackItems.push({
+      url: imageUrls[i],
+      alt: defaultTitle,
+      caption: null,
+      order: i,
+    });
+  }
+
+  return fallbackItems;
 }
+
 
 export async function createProjectAction(formData: FormData) {
   await requireAdminSession();
