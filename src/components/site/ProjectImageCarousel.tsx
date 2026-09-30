@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,7 +10,6 @@ import {
   Camera,
   ZoomIn,
 } from "lucide-react";
-
 import type { Image as CmsImage } from "@/data/types";
 
 interface ProjectImageCarouselProps {
@@ -116,7 +115,7 @@ export default function ProjectImageCarousel({
   const currentAlt = currentImage.alt || projectTitle;
 
   // Slide animation variants
-  const slideVariants = {
+  const slideVariants: Variants = {
     enter: (dir: number) => ({
       x: dir > 0 ? "100%" : "-100%",
       opacity: 0,
@@ -127,7 +126,7 @@ export default function ProjectImageCarousel({
       opacity: 1,
       scale: 1,
       transition: {
-        x: { type: "spring", stiffness: 300, damping: 30 },
+        x: { type: "spring" as const, stiffness: 300, damping: 30 },
         opacity: { duration: 0.25 },
         scale: { duration: 0.25 },
       },
@@ -137,12 +136,13 @@ export default function ProjectImageCarousel({
       opacity: 0,
       scale: 0.98,
       transition: {
-        x: { type: "spring", stiffness: 300, damping: 30 },
+        x: { type: "spring" as const, stiffness: 300, damping: 30 },
         opacity: { duration: 0.2 },
         scale: { duration: 0.2 },
       },
     }),
   };
+
 
   return (
     <div className={`space-y-3.5 select-none ${className}`}>
