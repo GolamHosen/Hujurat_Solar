@@ -16,21 +16,28 @@ import {
   Star,
   Layers,
 } from "lucide-react";
-import ImageUploadField from "@/components/dashboard/ImageUploadField";
-import type { projects, locations } from "@/db/schema";
+import ProjectImageGalleryUpload from "@/components/dashboard/ProjectImageGalleryUpload";
+import type { projects, locations, projectImages, projectVideos } from "@/db/schema";
 
 type Project = typeof projects.$inferSelect;
 type Location = typeof locations.$inferSelect;
+type ProjectImage = typeof projectImages.$inferSelect;
+type ProjectVideo = typeof projectVideos.$inferSelect;
 
 export default function ProjectForm({
   action,
   project,
   locationOptions,
+  initialImages = [],
+  initialVideos = [],
 }: {
   action: (formData: FormData) => void;
   project?: Project;
   locationOptions: Location[];
+  initialImages?: ProjectImage[];
+  initialVideos?: ProjectVideo[];
 }) {
+
   const [title, setTitle] = useState(project?.title || "");
   const [slug, setSlug] = useState(project?.slug || "");
   const [suburb, setSuburb] = useState(project?.suburb || "");
@@ -254,55 +261,62 @@ export default function ProjectForm({
           </div>
         </div>
 
-        {/* Card 5: Gallery & Video (only for new creation) */}
-        {!project && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="mb-5 flex items-center gap-2 border-b border-slate-100 pb-3">
-              <Video className="h-5 w-5 text-rose-500" />
-              <h2 className="font-display text-base font-bold text-slate-950">Additional Gallery & Video Showcase</h2>
+        {/* Card 5: Gallery & Carousel Images */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-5 flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <Layers className="h-5 w-5 text-brand" />
+              <h2 className="font-display text-base font-bold text-slate-950">
+                Installation Gallery & Carousel Photos
+              </h2>
             </div>
+            <span className="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
+              Frontend Carousel
+            </span>
+          </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-700">
-                  Additional Gallery Images <span className="font-normal text-slate-400">(one URL per line)</span>
-                </label>
-                <textarea
-                  name="imageUrls"
-                  rows={3}
-                  placeholder={"https://res.cloudinary.com/.../photo-1.jpg\nhttps://res.cloudinary.com/.../photo-2.jpg"}
-                  className="w-full font-mono rounded-xl border border-slate-300 px-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-                />
-              </div>
+          <ProjectImageGalleryUpload
+            initialImages={initialImages}
+            initialFeaturedImage={project?.featuredImage}
+            projectTitle={title}
+          />
 
-              <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-4">
-                <p className="text-xs font-bold text-slate-800">Project Walkthrough Video (Optional)</p>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <input
-                    name="videoUrl"
-                    placeholder="Video URL (/uploads/video.mp4 or YouTube)"
-                    className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs"
-                  />
-                  <input
-                    name="videoThumbnail"
-                    placeholder="Thumbnail image URL"
-                    className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs"
-                  />
-                  <input
-                    name="videoTitle"
-                    placeholder="Video title"
-                    className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs"
-                  />
-                  <input
-                    name="videoTranscript"
-                    placeholder="Video transcript for Australian SEO"
-                    className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs"
-                  />
-                </div>
-              </div>
+          <div className="mt-6 border-t border-slate-100 pt-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Video className="h-4 w-4 text-rose-500" />
+              <p className="text-xs font-bold text-slate-800">
+                Project Walkthrough Video (Optional)
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                name="videoUrl"
+                defaultValue={initialVideos?.[0]?.url ?? ""}
+                placeholder="Video URL (/uploads/video.mp4 or YouTube)"
+                className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 focus:border-brand focus:outline-none"
+              />
+              <input
+                name="videoThumbnail"
+                defaultValue={initialVideos?.[0]?.thumbnailUrl ?? ""}
+                placeholder="Thumbnail image URL"
+                className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 focus:border-brand focus:outline-none"
+              />
+              <input
+                name="videoTitle"
+                defaultValue={initialVideos?.[0]?.title ?? ""}
+                placeholder="Video title"
+                className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 focus:border-brand focus:outline-none"
+              />
+              <input
+                name="videoTranscript"
+                defaultValue={initialVideos?.[0]?.transcript ?? ""}
+                placeholder="Video transcript for Australian SEO"
+                className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs text-slate-900 focus:border-brand focus:outline-none"
+              />
             </div>
           </div>
-        )}
+        </div>
+
         {/* Bottom Save Action Bar */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs text-slate-500">
@@ -410,20 +424,33 @@ export default function ProjectForm({
           </div>
         </div>
 
-        {/* Card: Featured Image */}
+        {/* Card: Carousel & Media Guidance */}
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-display text-sm font-bold text-slate-950">Featured Project Photo</h3>
-            <span className="text-[10px] text-slate-400">High Resolution</span>
+          <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="font-display text-sm font-bold text-slate-950">Carousel & Showcase</h3>
+            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+              Interactive
+            </span>
           </div>
-
-          <ImageUploadField
-            name="featuredImage"
-            label="Hero Showcase Image"
-            defaultValue={project?.featuredImage ?? ""}
-            placeholder="/uploads/project-photo.jpg or Cloudinary URL"
-          />
+          <p className="text-xs text-slate-600 leading-relaxed">
+            All photos uploaded in <strong className="text-slate-900">Installation Gallery</strong> will be displayed as an interactive, responsive carousel on the project page.
+          </p>
+          <div className="mt-3 rounded-xl bg-slate-50 border border-slate-200/80 p-3 space-y-2 text-[11px] text-slate-600">
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-500 font-bold">⭐</span>
+              <span>Click <strong>Set Cover</strong> to select the hero card photo</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-brand font-bold">⇅</span>
+              <span>Use arrows to rearrange slide order</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-emerald-500 font-bold">✓</span>
+              <span>Full-screen zoom & touch swipe enabled</span>
+            </div>
+          </div>
         </div>
+
 
         {/* Card: Location & NSW Area */}
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

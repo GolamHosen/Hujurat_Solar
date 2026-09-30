@@ -6,7 +6,7 @@ import { projects } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import ProjectForm from "../../ProjectForm";
 import { updateProjectAction } from "@/lib/actions/projects";
-import { getAllLocations } from "@/lib/queries";
+import { getAllLocations, getProjectImages, getProjectVideos } from "@/lib/queries";
 
 export default async function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,7 +14,11 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
   const project = rows[0];
   if (!project) notFound();
 
-  const locations = await getAllLocations();
+  const [locations, existingImages, existingVideos] = await Promise.all([
+    getAllLocations(),
+    getProjectImages(project.id),
+    getProjectVideos(project.id),
+  ]);
   const action = updateProjectAction.bind(null, project.id);
 
   return (
@@ -32,7 +36,14 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
         </div>
       </div>
 
-      <ProjectForm action={action} project={project} locationOptions={locations} />
+      <ProjectForm
+        action={action}
+        project={project}
+        locationOptions={locations}
+        initialImages={existingImages}
+        initialVideos={existingVideos}
+      />
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { ArrowRight, Battery, CalendarDays, MapPin, PlayCircle, Quote, Zap } from "lucide-react";
 import Breadcrumbs from "@/components/site/Breadcrumbs";
 import JsonLd from "@/components/site/JsonLd";
@@ -9,9 +9,11 @@ import { getProjectBySlug } from "@/data/cms";
 import type { ProjectDetail } from "@/data/types";
 import { buildMetadata, projectSchema, reviewSchema } from "@/lib/seo";
 import { formatLongDate } from "@/lib/format";
-import type { Metadata } from "next";
+import ProjectImageCarousel from "@/components/site/ProjectImageCarousel";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+
+
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
   if (!project) return {};
@@ -78,19 +80,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <h1 className="mt-3 font-display text-3xl font-extrabold text-slate-950 sm:text-4xl">{project.title}</h1>
           <p className="mt-4 text-lg text-slate-600">{project.summary}</p>
 
-          <div className="relative mt-7 h-72 w-full overflow-hidden rounded-2xl sm:h-[26rem]">
-            <Image src={project.featuredImage?.url || "/images/project-residential.jpg"} alt={project.featuredImage?.alt || project.title} fill preload className="object-cover" sizes="(min-width:1024px) 60vw, 100vw" />
+          <div className="mt-7">
+            <ProjectImageCarousel images={images} projectTitle={project.title} />
           </div>
 
-          {images.length > 1 && (
-            <div className="mt-4 grid grid-cols-3 gap-3">
-              {images.slice(1).map((image) => (
-                <div key={image.url} className="relative h-28 overflow-hidden rounded-xl sm:h-36">
-                  <Image src={image.url} alt={image.alt || project.title} fill className="object-cover" sizes="33vw" />
-                </div>
-              ))}
-            </div>
-          )}
 
           {videos.length > 0 && (
             <div className="mt-8 rounded-2xl border border-slate-200 p-6">

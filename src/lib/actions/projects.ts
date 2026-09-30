@@ -54,22 +54,74 @@ function buildProjectValues(formData: FormData) {
   };
 }
 
+interface GalleryImageItem {
+  url: string;
+  alt?: string | null;
+  caption?: string | null;
+  order?: number;
+  isFeatured?: boolean;
+}
+
+function extractGalleryImages(formData: FormData, defaultTitle: string): GalleryImageItem[] {
+  const galleryJson = String(formData.get("galleryImages") || "").trim();
+  if (galleryJson) {
+    try {
+      const parsed = JSON.parse(galleryJson);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+          .map((item, index) => {
+            const url = typeof item === "string" ? item.trim() : String(item?.url || "").trim();
+            const alt = typeof item === "object" && item?.alt !== undefined ? String(item.alt).trim() : defaultTitle;
+            const caption = typeof item === "object" && item?.caption ? String(item.caption).trim() : null;
+            const isFeatured = typeof item === "object" ? Boolean(item?.isFeatured) : false;
+            return url ? { url, alt: alt || defaultTitle, caption, order: index, isFeatured } : null;
+          })
+          .filter((item): item is GalleryImageItem => item !== null);
+      }
+    } catch (e) {
+      console.error("Failed to parse galleryImages JSON:", e);
+    }
+  }
+
+  // Fallback to newline-separated imageUrls if present
+  const imageUrls = String(formData.get("imageUrls") || "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return imageUrls.map((url, index) => ({
+    url,
+    alt: defaultTitle,
+    caption: null,
+    order: index,
+  }));
+}
+
 export async function createProjectAction(formData: FormData) {
   await requireAdminSession();
 
   assertFormData(formData);
 
   const values = buildProjectValues(formData);
+  const gallery = extractGalleryImages(formData, values.title);
+
+  // If featuredImage is empty, pick the one marked featured or the first gallery image
+  if (!values.featuredImage && gallery.length > 0) {
+    const featuredItem = gallery.find((g) => g.isFeatured) || gallery[0];
+    values.featuredImage = featuredItem.url;
+  }
+
   const [created] = await db.insert(projects).values(values).returning();
 
-  const imageUrls = String(formData.get("imageUrls") || "")
-    .split("\n")
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (imageUrls.length > 0) {
+  if (gallery.length > 0) {
     await db.insert(projectImages).values(
-      imageUrls.map((url, index) => ({ projectId: created.id, url, alt: created.title, order: index }))
+      gallery.map((img, index) => ({
+        projectId: created.id,
+        url: img.url,
+        alt: img.alt || created.title,
+        caption: img.caption,
+        order: img.order ?? index,
+      }))
     );
   }
 
@@ -100,7 +152,46 @@ export async function updateProjectAction(id: number, formData: FormData) {
   if (!projectId) return;
 
   const values = buildProjectValues(formData);
+  const gallery = extractGalleryImages(formData, values.title);
+
+  // If featuredImage is empty, pick the one marked featured or the first gallery image
+  if (!values.featuredImage && gallery.length > 0) {
+    const featuredItem = gallery.find((g) => g.isFeatured) || gallery[0];
+    values.featuredImage = featuredItem.url;
+  }
+
   await db.update(projects).set(values).where(eq(projects.id, projectId));
+
+  // Sync project images when gallery data is provided
+  const hasGallerySubmitted = formData.has("galleryImages") || formData.has("imageUrls");
+  if (hasGallerySubmitted) {
+    await db.delete(projectImages).where(eq(projectImages.projectId, projectId));
+    if (gallery.length > 0) {
+      await db.insert(projectImages).values(
+        gallery.map((img, index) => ({
+          projectId,
+          url: img.url,
+          alt: img.alt || values.title,
+          caption: img.caption,
+          order: img.order ?? index,
+        }))
+      );
+    }
+  }
+
+  // Handle video update if provided
+  const videoUrl = String(formData.get("videoUrl") || "").trim();
+  if (videoUrl) {
+    await db.delete(projectVideos).where(eq(projectVideos.projectId, projectId));
+    await db.insert(projectVideos).values({
+      projectId,
+      url: videoUrl,
+      thumbnailUrl: String(formData.get("videoThumbnail") || "") || values.featuredImage,
+      title: String(formData.get("videoTitle") || values.title),
+      description: String(formData.get("videoDescription") || ""),
+      transcript: String(formData.get("videoTranscript") || ""),
+    });
+  }
 
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
@@ -110,6 +201,7 @@ export async function updateProjectAction(id: number, formData: FormData) {
   updateTag("cms");
   redirect("/dashboard/projects");
 }
+
 
 export async function deleteProjectAction(id: number) {
   await requireAdminSession();

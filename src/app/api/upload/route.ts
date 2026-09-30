@@ -90,6 +90,33 @@ async function uploadToCloudinary(
   });
 }
 
+async function processUploadFile(file: File): Promise<string> {
+  if (file.size > MAX_UPLOAD_BYTES) {
+    throw new Error(`File "${file.name}" is too large. Maximum 8 MB.`);
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const bytes = new Uint8Array(buffer);
+  const detected = detectType(bytes);
+
+  if (!detected) {
+    throw new Error(
+      `Unsupported file type for "${file.name}". Upload JPG, PNG, GIF, WebP, or AVIF.`
+    );
+  }
+
+  if (isCloudinaryConfigured()) {
+    const result = await uploadToCloudinary(buffer, "hujurat-solar");
+    return result.secure_url;
+  } else {
+    const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+    await mkdir(UPLOAD_DIR, { recursive: true });
+    const filename = `${Date.now()}-${crypto.randomUUID()}${detected.extension}`;
+    await writeFile(path.join(UPLOAD_DIR, filename), bytes);
+    return `/uploads/${filename}`;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     await requireAdminSession();
@@ -99,52 +126,41 @@ export async function POST(request: NextRequest) {
 
   try {
     const formData = await request.formData();
-    const file = formData.get("file");
+    
+    // Collect all files from "files" or "file" form keys
+    const rawFiles: unknown[] = [
+      ...formData.getAll("files"),
+      ...formData.getAll("file"),
+    ];
 
-    if (!file || typeof file === "string" || file.size === 0) {
+    const files = rawFiles.filter(
+      (f): f is File => f instanceof File && f.size > 0
+    );
+
+    if (files.length === 0) {
       return NextResponse.json(
         { error: "No file provided" },
         { status: 400 }
       );
     }
 
-    if (file.size > MAX_UPLOAD_BYTES) {
-      return NextResponse.json(
-        { error: "File too large. Maximum 8 MB." },
-        { status: 400 }
-      );
+    const urls: string[] = [];
+    for (const file of files) {
+      const url = await processUploadFile(file);
+      urls.push(url);
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const bytes = new Uint8Array(buffer);
-    const detected = detectType(bytes);
-
-    if (!detected) {
-      return NextResponse.json(
-        { error: "Unsupported file type. Upload JPG, PNG, GIF, WebP, or AVIF." },
-        { status: 400 }
-      );
-    }
-
-    let url: string;
-
-    if (isCloudinaryConfigured()) {
-      const result = await uploadToCloudinary(buffer, "hujurat-solar");
-      url = result.secure_url;
-    } else {
-      const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
-      await mkdir(UPLOAD_DIR, { recursive: true });
-      const filename = `${Date.now()}-${crypto.randomUUID()}${detected.extension}`;
-      await writeFile(path.join(UPLOAD_DIR, filename), bytes);
-      url = `/uploads/${filename}`;
-    }
-
-    return NextResponse.json({ url });
+    return NextResponse.json({
+      url: urls[0],
+      urls,
+    });
   } catch (err) {
     console.error("Upload API error:", err);
+    const message = err instanceof Error ? err.message : "Upload failed. Please try again.";
     return NextResponse.json(
-      { error: "Upload failed. Please try again." },
-      { status: 500 }
+      { error: message },
+      { status: 400 }
     );
   }
 }
+
