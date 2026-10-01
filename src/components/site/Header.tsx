@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Phone, ArrowRight } from "lucide-react";
 import { siteConfig } from "@/lib/site";
+import { useQuoteModal } from "@/components/forms/QuoteModalContext";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
@@ -20,6 +21,7 @@ const NAV_LINKS = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { openQuoteModal } = useQuoteModal();
 
   return (
     <header className="sticky top-0 left-0 right-0 z-50 border-b border-slate-100 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
@@ -82,14 +84,14 @@ export default function Header() {
             </a>
           </div>
 
-          <Link
-            href="/contact"
-            prefetch={true}
+          <button
+            type="button"
+            onClick={openQuoteModal}
             className="group inline-flex items-center gap-2.5 rounded-full bg-[#061225] px-6 py-2.5 sm:py-3 text-[14px] sm:text-[15px] font-bold text-white transition-all duration-300 hover:bg-[#FFB71B] hover:text-[#061225] shadow-[0_4px_16px_rgba(6,18,37,0.2)] hover:shadow-[0_0_20px_rgba(255,183,27,0.4)] shrink-0"
           >
             <span>Get a Free Quote</span>
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -150,14 +152,13 @@ export default function Header() {
                   <span className="text-xs font-normal text-slate-500">Mobile</span>
                 </a>
               </div>
-              <Link
-                href="/contact"
-                prefetch={true}
-                onClick={() => setOpen(false)}
+              <button
+                type="button"
+                onClick={() => { setOpen(false); openQuoteModal(); }}
                 className="mt-3 rounded-full bg-[#061225] px-6 py-3.5 text-center text-sm font-bold text-white shadow-md hover:bg-[#FFB71B] hover:text-[#061225]"
               >
                 Get a Free Quote
-              </Link>
+              </button>
             </div>
           </motion.div>
         )}

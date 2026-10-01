@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useQuoteModal } from "@/components/forms/QuoteModalContext";
 import {
   ArrowRight,
   ShieldCheck,
@@ -30,6 +31,7 @@ export default function Hero({ averageRating = 5.0, reviewCount = 0 }: HeroProps
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const { openQuoteModal } = useQuoteModal();
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -268,13 +270,14 @@ export default function Hero({ averageRating = 5.0, reviewCount = 0 }: HeroProps
               transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="mt-9 flex flex-wrap items-center gap-4"
             >
-              <Link
-                href="/contact"
+              <button
+                type="button"
+                onClick={openQuoteModal}
                 className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-[#FFB71B] px-8 py-4 text-sm font-bold text-[#061225] shadow-[0_0_28px_rgba(255,183,27,0.45)] transition-all duration-300 hover:bg-[#FFC83D] hover:shadow-[0_0_38px_rgba(255,200,61,0.65)] hover:scale-[1.02]"
               >
                 <span>Get a Free Quote</span>
                 <ArrowRight className="h-4 w-4 text-[#061225] transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
+              </button>
 
               <Link
                 href="/solar-calculator"

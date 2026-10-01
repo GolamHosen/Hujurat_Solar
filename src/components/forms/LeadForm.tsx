@@ -157,7 +157,7 @@ export default function LeadForm({ compact = false }: { compact?: boolean }) {
         className="mt-1 inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-brand-dark disabled:opacity-70"
       >
         {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-        Get My Free Quote
+        Submit
       </button>
       <p className="text-center text-xs text-slate-500">No obligation. We respond within one business day.</p>
     </form>
