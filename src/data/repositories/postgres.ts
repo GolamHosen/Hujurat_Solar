@@ -109,7 +109,11 @@ function mapService(row: typeof services.$inferSelect): Service {
 }
 
 function mapLocation(row: typeof locations.$inferSelect): Location {
-  const heroImage = toImage(row.heroImage, row.name);
+  const imageUrl =
+    row.heroImage && row.heroImage !== "/images/location-suburb.jpg"
+      ? row.heroImage
+      : null;
+  const heroImage = toImage(imageUrl, row.name);
   return {
     id: String(row.id),
     slug: row.slug,

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Pencil, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { ImageIcon, Pencil, Trash2 } from "lucide-react";
 import { getAllLocations } from "@/lib/queries";
 import { createLocationAction, deleteLocationAction } from "@/lib/actions/locations";
 import ImageUploadField from "@/components/dashboard/ImageUploadField";
@@ -18,33 +19,59 @@ export default async function DashboardLocationsPage() {
             <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-4 py-3">Location</th>
+                <th className="px-4 py-3">Image</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody>
-              {locations.map((location) => (
-                <tr key={location.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3 font-medium text-slate-900">{location.name}</td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${location.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                      {location.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <Link href={`/dashboard/locations/${location.id}/edit`} className="text-slate-500 hover:text-brand-dark">
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                      <form action={deleteLocationAction.bind(null, location.id)}>
-                        <button type="submit" className="text-slate-500 hover:text-red-600">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {locations.map((location) => {
+                const hasImage = Boolean(
+                  location.heroImage &&
+                  location.heroImage !== "/images/location-suburb.jpg"
+                );
+
+                return (
+                  <tr key={location.id} className="border-t border-slate-100">
+                    <td className="px-4 py-3 font-medium text-slate-900">{location.name}</td>
+                    <td className="px-4 py-3">
+                      {hasImage ? (
+                        <div className="relative h-9 w-14 overflow-hidden rounded-md border border-slate-200 bg-slate-100">
+                          <Image
+                            src={location.heroImage!}
+                            alt={location.name}
+                            fill
+                            className="object-cover"
+                            sizes="56px"
+                            unoptimized
+                          />
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+                          <ImageIcon className="h-3.5 w-3.5" /> No image
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${location.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                        {location.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <Link href={`/dashboard/locations/${location.id}/edit`} className="text-slate-500 hover:text-brand-dark" title="Edit location">
+                          <Pencil className="h-4 w-4" />
+                        </Link>
+                        <form action={deleteLocationAction.bind(null, location.id)}>
+                          <button type="submit" className="text-slate-500 hover:text-red-600" title="Delete location">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -59,7 +86,10 @@ export default async function DashboardLocationsPage() {
             </div>
             <input name="blurb" placeholder="Short blurb" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <textarea name="description" placeholder="Full description" rows={3} className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
-            <ImageUploadField name="heroImage" label="Hero image" placeholder="Hero image URL" />
+            <div>
+              <ImageUploadField name="heroImage" label="Hero image (optional)" placeholder="Upload or paste image URL" />
+              <p className="mt-1 text-[11px] text-slate-500">Only locations with an image will show a photo banner on the frontend card.</p>
+            </div>
             <input name="seoTitle" placeholder="SEO title" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <input name="seoDescription" placeholder="SEO meta description" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm" />
             <select name="status" className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm">

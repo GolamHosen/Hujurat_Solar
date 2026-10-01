@@ -31,23 +31,52 @@ export default async function LocationsPage() {
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {locations.map((location) => (
-            <Link key={location.id} href={`/locations/${location.slug}`} prefetch={true} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-              <div className="relative h-40 w-full">
-                <Image src={location.heroImage?.url || "/images/location-suburb.jpg"} alt={location.heroImage?.alt || location.name} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width:1024px) 33vw, 100vw" />
-              </div>
-              <div className="p-6">
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                  <MapPin className="h-3.5 w-3.5 text-brand-dark" /> {location.region}
-                </p>
-                <h2 className="mt-2 font-display text-lg font-bold text-slate-950">{location.name}</h2>
-                <p className="mt-2 line-clamp-2 text-sm text-slate-600">{location.blurb}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
-                  View area <ArrowUpRight className="h-3.5 w-3.5" />
-                </span>
-              </div>
-            </Link>
-          ))}
+          {locations.map((location) => {
+            const hasImage = Boolean(
+              location.heroImage?.url &&
+              location.heroImage.url !== "/images/location-suburb.jpg"
+            );
+
+            return (
+              <Link
+                key={location.id}
+                href={`/locations/${location.slug}`}
+                prefetch={true}
+                className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-brand/50 hover:shadow-lg"
+              >
+                {hasImage && (
+                  <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+                    <Image
+                      src={location.heroImage!.url}
+                      alt={location.heroImage!.alt || location.name}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                      sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col justify-between p-6">
+                  <div>
+                    {!hasImage && (
+                      <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-brand-dark transition group-hover:bg-brand group-hover:text-slate-950">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                    )}
+                    <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                      <MapPin className="h-3.5 w-3.5 text-brand-dark" /> {location.region || location.state}
+                    </p>
+                    <h2 className="mt-2 font-display text-lg font-bold text-slate-950">{location.name}</h2>
+                    {location.blurb && (
+                      <p className="mt-2 line-clamp-3 text-sm text-slate-600">{location.blurb}</p>
+                    )}
+                  </div>
+                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
+                    View area <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
     </div>

@@ -51,7 +51,7 @@ async function main() {
         blurb: "Solar panels, batteries and monitoring systems installed across the Greater Sydney metro area.",
         description:
           "Hujurat Solar supplies and installs residential and commercial solar systems across Greater Sydney. Our CEC-accredited installers work with homeowners, strata properties and businesses to design systems suited to Sydney's climate, roof types and energy retailers.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Installer Sydney | Hujurat Solar Supply & Install",
         seoDescription:
           "Local Sydney solar installers offering residential and commercial solar panel, battery and monitoring installations. Get a free, no-obligation quote today.",
@@ -65,7 +65,7 @@ async function main() {
         blurb: "Servicing Western Sydney households and businesses with premium solar and battery systems.",
         description:
           "Western Sydney experiences some of the hottest summer temperatures in the Sydney basin, making solar and battery storage particularly valuable for managing air-conditioning costs. Hujurat Solar is based locally and services all Western Sydney suburbs.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Installer Western Sydney | Hujurat Solar",
         seoDescription:
           "Trusted solar and battery installer for Western Sydney homes and businesses. Local team, genuine workmanship warranty, CEC-accredited installs.",
@@ -79,7 +79,7 @@ async function main() {
         blurb: "Our home base — fast quotes and local installs for Parramatta homes and businesses.",
         description:
           "Parramatta is home to our showroom and warehouse. We regularly install rooftop solar, battery storage and monitoring systems for houses, townhouses and commercial units throughout the Parramatta LGA.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Panel Installation Parramatta | Hujurat Solar",
         seoDescription:
           "Local Parramatta solar installer. Residential and commercial solar, battery storage and system upgrades. Free site assessment and quote.",
@@ -93,7 +93,7 @@ async function main() {
         blurb: "Rooftop solar and battery installs across Blacktown and surrounding suburbs.",
         description:
           "Blacktown's mix of established homes and new estates gives us plenty of experience with tile, tin and Colorbond roofs. See our recent Blacktown solar and battery projects below.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Installer Blacktown NSW | Hujurat Solar",
         seoDescription: "Blacktown solar panel and battery installation specialists. Local projects, real results, free quotes.",
         status: "published",
@@ -106,7 +106,7 @@ async function main() {
         blurb: "Beat Penrith's summer heat with a correctly sized solar and battery system.",
         description:
           "Penrith regularly records the highest temperatures in Sydney during summer. A well-designed solar and battery system helps manage cooling costs while exporting excess energy back to the grid.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Battery Installer Penrith | Hujurat Solar",
         seoDescription: "Solar panel and battery storage installation in Penrith. Locally based team, premium equipment, honest advice.",
         status: "published",
@@ -119,7 +119,7 @@ async function main() {
         blurb: "Residential and commercial solar installs across Liverpool and South Western Sydney.",
         description:
           "From single-storey family homes to commercial warehouses, our Liverpool projects cover a wide range of system sizes and roof configurations.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Installation Liverpool NSW | Hujurat Solar",
         seoDescription: "Liverpool solar panel and battery installer. Residential and commercial systems, genuine local service.",
         status: "published",
@@ -132,7 +132,7 @@ async function main() {
         blurb: "Solar systems designed for Camden's growing suburbs and acreage properties.",
         description:
           "Camden's larger blocks and acreage properties often suit bigger systems and three-phase installs. We help homeowners size systems correctly for future EV charging and pool pumps.",
-        heroImage: "/images/location-suburb.jpg",
+        heroImage: null,
         seoTitle: "Solar Installer Camden NSW | Hujurat Solar",
         seoDescription: "Camden solar and battery installation specialists, including acreage and rural properties.",
         status: "published",

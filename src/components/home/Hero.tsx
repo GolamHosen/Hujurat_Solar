@@ -79,15 +79,17 @@ export default function Hero() {
           });
         }
 
-        gsap.to(".floating-badge", {
-          y: -8,
-          rotation: 0.5,
-          duration: 3,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut",
-          stagger: 0.6,
-        });
+        if (containerRef.current?.querySelector(".floating-badge")) {
+          gsap.to(".floating-badge", {
+            y: -8,
+            rotation: 0.5,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "power1.inOut",
+            stagger: 0.6,
+          });
+        }
 
         // Animate the golden arc glow lines
         gsap.to(".hero-arc-glow", {

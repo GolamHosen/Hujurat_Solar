@@ -114,12 +114,19 @@ export default async function EditLocationPage({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Hero Image
+              Hero Image (Optional)
             </label>
             <ImageUploadField
               name="heroImage"
-              defaultValue={location.heroImage ?? ""}
+              defaultValue={
+                location.heroImage && location.heroImage !== "/images/location-suburb.jpg"
+                  ? location.heroImage
+                  : ""
+              }
             />
+            <p className="mt-1 text-[11px] text-slate-500">
+              Leave empty if you do not want an image on the frontend location card.
+            </p>
           </div>
 
           <div>

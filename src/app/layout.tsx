@@ -99,8 +99,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-AU" className={`${inter.variable} ${manrope.variable}`}>
-      <body className="min-h-screen bg-white font-sans text-slate-900 antialiased">
+    <html lang="en-AU" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
+      <body className="min-h-screen bg-white font-sans text-slate-900 antialiased" suppressHydrationWarning>
         <Suspense fallback={null}>
           <NavigationProgress />
         </Suspense>

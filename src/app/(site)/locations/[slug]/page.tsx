@@ -76,18 +76,46 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         ]}
       />
 
-      <section className="relative">
-        <div className="relative h-72 w-full sm:h-96">
-          <Image src={location.heroImage?.url || "/images/location-suburb.jpg"} alt={location.heroImage?.alt || location.name} fill preload className="object-cover" sizes="100vw" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-slate-950/10" />
-          <div className="section-container absolute inset-x-0 bottom-0 pb-10 text-white">
+      {location.heroImage?.url && location.heroImage.url !== "/images/location-suburb.jpg" ? (
+        <section className="relative">
+          <div className="relative h-72 w-full sm:h-96">
+            <Image
+              src={location.heroImage.url}
+              alt={location.heroImage.alt || location.name}
+              fill
+              preload
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-slate-950/20" />
+            <div className="section-container absolute inset-x-0 bottom-0 pb-10 text-white">
+              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand">
+                <MapPin className="h-3.5 w-3.5" /> {location.region}, {location.state}
+              </p>
+              <h1 className="mt-3 font-display text-4xl font-extrabold sm:text-5xl">
+                Solar Installer in {location.name}
+              </h1>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="relative overflow-hidden bg-slate-950 py-16 sm:py-20 text-white">
+          <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:24px_24px] opacity-10" />
+          <div className="section-container relative z-10">
             <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand">
               <MapPin className="h-3.5 w-3.5" /> {location.region}, {location.state}
             </p>
-            <h1 className="mt-3 font-display text-4xl font-extrabold sm:text-5xl">Solar Installer in {location.name}</h1>
+            <h1 className="mt-3 font-display text-4xl font-extrabold sm:text-5xl">
+              Solar Installer in {location.name}
+            </h1>
+            {location.blurb && (
+              <p className="mt-3 max-w-2xl text-base text-slate-300">
+                {location.blurb}
+              </p>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="section-container grid gap-10 py-14 lg:grid-cols-[1.4fr_1fr]">
         <div>
