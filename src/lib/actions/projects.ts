@@ -3,8 +3,8 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { projects, projectImages, projectVideos } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { projects, projectImages, projectVideos, locations } from "@/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { projectSlug, slugify } from "@/lib/slug";
 import { requireAdminSession } from "@/lib/auth";
 import { assertFormData, toPositiveInt } from "@/lib/validation";
@@ -138,6 +138,18 @@ export async function createProjectAction(formData: FormData) {
   const values = buildProjectValues(formData);
   const gallery = extractGalleryImages(formData, values.title);
 
+  // Auto-link locationId from suburb if not explicitly chosen
+  if (!values.locationId && values.suburb) {
+    const match = await db
+      .select({ id: locations.id })
+      .from(locations)
+      .where(sql`lower(${locations.name}) = lower(${values.suburb})`)
+      .limit(1);
+    if (match[0]) {
+      values.locationId = match[0].id;
+    }
+  }
+
   // If featuredImage is empty, pick the one marked featured or the first gallery image
   if (!values.featuredImage && gallery.length > 0) {
     const featuredItem = gallery.find((g) => g.isFeatured) || gallery[0];
@@ -172,8 +184,10 @@ export async function createProjectAction(formData: FormData) {
 
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
+  revalidatePath("/locations");
   revalidatePath("/");
   updateTag("projects");
+  updateTag("locations");
   updateTag("cms");
   redirect("/dashboard/projects");
 }
@@ -186,6 +200,18 @@ export async function updateProjectAction(id: number, formData: FormData) {
 
   const values = buildProjectValues(formData);
   const gallery = extractGalleryImages(formData, values.title);
+
+  // Auto-link locationId from suburb if not explicitly chosen
+  if (!values.locationId && values.suburb) {
+    const match = await db
+      .select({ id: locations.id })
+      .from(locations)
+      .where(sql`lower(${locations.name}) = lower(${values.suburb})`)
+      .limit(1);
+    if (match[0]) {
+      values.locationId = match[0].id;
+    }
+  }
 
   // If featuredImage is empty, pick the one marked featured or the first gallery image
   if (!values.featuredImage && gallery.length > 0) {
@@ -229,8 +255,10 @@ export async function updateProjectAction(id: number, formData: FormData) {
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
   revalidatePath(`/projects/${values.slug}`);
+  revalidatePath("/locations");
   revalidatePath("/");
   updateTag("projects");
+  updateTag("locations");
   updateTag("cms");
   redirect("/dashboard/projects");
 }
@@ -245,7 +273,9 @@ export async function deleteProjectAction(id: number) {
   await db.delete(projects).where(eq(projects.id, projectId));
   revalidatePath("/dashboard/projects");
   revalidatePath("/projects");
+  revalidatePath("/locations");
   revalidatePath("/");
   updateTag("projects");
+  updateTag("locations");
   updateTag("cms");
 }

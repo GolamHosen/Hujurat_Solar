@@ -28,14 +28,13 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const location = await getLocationBySlug(slug);
   if (!location) notFound();
 
-  // No direct database access: "projects near here" is a data-layer concern.
-  const [localProjects, services, allPublished] = await Promise.all([
-    getProjects({ locationId: location.id }),
+  // Query projects belonging to this location (by locationId or suburb)
+  const [localProjects, services] = await Promise.all([
+    getProjects({ locationId: location.id, suburb: location.name }),
     getServices(),
-    getProjects(),
   ]);
 
-  const projectsToShow = localProjects.length > 0 ? localProjects : allPublished.slice(0, 3);
+  const projectsToShow = localProjects;
 
   const faqs = [
     {
@@ -136,19 +135,55 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
           {projectsToShow.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-2xl font-bold text-slate-950">Recent projects near {location.name}</h2>
-              <div className="mt-4 grid gap-5 sm:grid-cols-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-display text-2xl font-bold text-slate-950">
+                    Recent projects in {location.name}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Completed solar and battery installations in {location.name}.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
                 {projectsToShow.map((project) => (
-                  <Link key={project.id} href={`/projects/${project.slug}`} className="group overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <div className="relative h-40 w-full">
-                      <Image src={project.featuredImage?.url || "/images/project-residential.jpg"} alt={project.featuredImage?.alt || project.title} fill className="object-cover transition group-hover:scale-105" sizes="50vw" />
+                  <Link
+                    key={project.id}
+                    href={`/projects/${project.slug}`}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition hover:-translate-y-0.5 hover:border-brand/50 hover:shadow-md"
+                  >
+                    <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+                      <Image
+                        src={project.featuredImage?.url || "/images/project-residential.jpg"}
+                        alt={project.featuredImage?.alt || project.title}
+                        fill
+                        className="object-cover transition duration-500 group-hover:scale-105"
+                        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
+                      />
                       {project.systemSizeKw && (
-                        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-slate-950/85 px-2.5 py-1 text-xs font-semibold text-brand">
+                        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-slate-950/85 px-2.5 py-1 text-xs font-semibold text-brand backdrop-blur">
                           <Zap className="h-3 w-3" /> {project.systemSizeKw}kW
                         </span>
                       )}
                     </div>
-                    <p className="p-4 text-sm font-semibold text-slate-900">{project.title}</p>
+                    <div className="flex flex-1 flex-col justify-between p-5">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          {project.suburb}, {project.state}
+                        </p>
+                        <h3 className="mt-1 font-display text-base font-bold text-slate-950 transition group-hover:text-brand-dark">
+                          {project.title}
+                        </h3>
+                        {project.summary && (
+                          <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-slate-600">
+                            {project.summary}
+                          </p>
+                        )}
+                      </div>
+                      <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-brand-dark">
+                        View project details <ArrowRight className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
                   </Link>
                 ))}
               </div>

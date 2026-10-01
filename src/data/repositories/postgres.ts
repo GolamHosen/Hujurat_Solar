@@ -1,4 +1,4 @@
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   blogPosts,
@@ -165,9 +165,20 @@ export function createPostgresRepository(): ContentRepository {
   return {
     async getProjects(options: ListOptions = {}) {
       const locationId = Number(options.locationId);
+      const suburb = options.suburb?.trim();
       const projectType =
         options.categorySlug === "residential" || options.categorySlug === "commercial"
           ? options.categorySlug
+          : undefined;
+
+      const hasLocationId = Number.isInteger(locationId) && locationId > 0;
+      const locationCondition =
+        hasLocationId && suburb
+          ? or(eq(projects.locationId, locationId), sql`lower(${projects.suburb}) = lower(${suburb})`)
+          : hasLocationId
+          ? eq(projects.locationId, locationId)
+          : suburb
+          ? sql`lower(${projects.suburb}) = lower(${suburb})`
           : undefined;
 
       const rows = await db
@@ -177,9 +188,7 @@ export function createPostgresRepository(): ContentRepository {
           and(
             options.preview ? undefined : eq(projects.status, "published"),
             options.featured ? eq(projects.featured, true) : undefined,
-            Number.isInteger(locationId) && locationId > 0
-              ? eq(projects.locationId, locationId)
-              : undefined,
+            locationCondition,
             projectType ? eq(projects.projectType, projectType) : undefined,
           ),
         )

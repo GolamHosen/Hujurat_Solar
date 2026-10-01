@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowUpRight, MapPin, Zap } from "lucide-react";
 import Breadcrumbs from "@/components/site/Breadcrumbs";
-import { getLocations } from "@/data/cms";
+import { getLocations, getProjects } from "@/data/cms";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
@@ -13,7 +13,10 @@ export const metadata = buildMetadata({
 });
 
 export default async function LocationsPage() {
-  const locations = await getLocations();
+  const [locations, allProjects] = await Promise.all([
+    getLocations(),
+    getProjects(),
+  ]);
 
   return (
     <div>
@@ -36,6 +39,12 @@ export default async function LocationsPage() {
               location.heroImage?.url &&
               location.heroImage.url !== "/images/location-suburb.jpg"
             );
+
+            const projectCount = allProjects.filter(
+              (p) =>
+                (p.locationId && p.locationId === location.id) ||
+                (p.suburb && p.suburb.toLowerCase() === location.name.toLowerCase())
+            ).length;
 
             return (
               <Link
@@ -62,16 +71,23 @@ export default async function LocationsPage() {
                         <MapPin className="h-5 w-5" />
                       </div>
                     )}
-                    <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                      <MapPin className="h-3.5 w-3.5 text-brand-dark" /> {location.region || location.state}
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                        <MapPin className="h-3.5 w-3.5 text-brand-dark" /> {location.region || location.state}
+                      </p>
+                      {projectCount > 0 && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-900 border border-amber-200/80">
+                          <Zap className="h-3 w-3 text-brand" /> {projectCount} {projectCount === 1 ? "project" : "projects"}
+                        </span>
+                      )}
+                    </div>
                     <h2 className="mt-2 font-display text-lg font-bold text-slate-950">{location.name}</h2>
                     {location.blurb && (
                       <p className="mt-2 line-clamp-3 text-sm text-slate-600">{location.blurb}</p>
                     )}
                   </div>
                   <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
-                    View area <ArrowUpRight className="h-3.5 w-3.5" />
+                    {projectCount > 0 ? "View area & projects" : "View area"} <ArrowUpRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
               </Link>

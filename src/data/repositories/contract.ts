@@ -14,6 +14,7 @@ export type ListOptions = {
   limit?: number;
   featured?: boolean;
   locationId?: string;
+  suburb?: string;
   categorySlug?: string;
   preview?: boolean;
 };
