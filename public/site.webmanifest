@@ -11,7 +11,7 @@
   "categories": ["business", "utilities"],
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/solar-logo.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"

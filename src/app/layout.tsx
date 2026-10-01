@@ -55,9 +55,13 @@ export const metadata: Metadata = {
   publisher: siteConfig.name,
   manifest: "/site.webmanifest",
   icons: {
-    icon: [{ url: "/solar-logo.png", type: "image/png" }],
+    icon: [
+      { url: "/solar-logo.png", type: "image/png", sizes: "32x32" },
+      { url: "/solar-logo.png", type: "image/png", sizes: "96x96" },
+      { url: "/solar-logo.png", type: "image/png", sizes: "192x192" },
+    ],
     shortcut: "/solar-logo.png",
-    apple: "/solar-logo.png",
+    apple: [{ url: "/solar-logo.png", sizes: "180x180" }],
   },
   appleWebApp: {
     capable: true,

@@ -32,7 +32,7 @@ export default function Header() {
             width={64}
             height={64}
             priority
-            className="h-14 w-14 sm:h-[60px] sm:w-[60px] rounded-xl object-contain drop-shadow-[0_2px_8px_rgba(255,183,27,0.2)] transition-transform duration-300 group-hover:scale-105"
+            className="h-14 w-14 sm:h-[80px] sm:w-[80px] rounded-xl object-contain drop-shadow-[0_2px_8px_rgba(255,183,27,0.2)] transition-transform duration-300 group-hover:scale-105"
           />
           <span className="font-display text-xl sm:text-2xl font-extrabold leading-tight text-[#061225] tracking-tight">
             Hujurat Solar
