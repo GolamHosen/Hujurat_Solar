@@ -26,7 +26,7 @@ export const siteConfig = {
   founded: "2021",
   priceRange: "$$",
   ogImage: "/images/og-default.png",
-  logo: "/logo.png",
+  logo: "/solar-logo.png",
   openingHours: [
     { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "08:00", closes: "17:00" },
     { days: ["Saturday"], opens: "09:00", closes: "14:00" },

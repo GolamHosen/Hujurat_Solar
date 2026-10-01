@@ -27,12 +27,12 @@ export default function Header() {
         {/* Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-3.5 group" onClick={() => setOpen(false)}>
           <Image
-            src="/logo.png"
+            src="/solar-logo.png"
             alt={siteConfig.shortName}
-            width={56}
-            height={56}
+            width={64}
+            height={64}
             priority
-            className="h-12 w-12 sm:h-13 sm:w-13 rounded-xl object-contain drop-shadow-[0_2px_8px_rgba(255,183,27,0.2)] transition-transform duration-300 group-hover:scale-105"
+            className="h-14 w-14 sm:h-[60px] sm:w-[60px] rounded-xl object-contain drop-shadow-[0_2px_8px_rgba(255,183,27,0.2)] transition-transform duration-300 group-hover:scale-105"
           />
           <span className="font-display text-xl sm:text-2xl font-extrabold leading-tight text-[#061225] tracking-tight">
             Hujurat Solar
@@ -52,9 +52,8 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 prefetch={true}
-                className={`text-[15px] xl:text-[16px] font-semibold transition-colors duration-200 ${
-                  active ? "text-[#FFB71B]" : "text-[#061225]/85 hover:text-[#FFB71B]"
-                }`}
+                className={`text-[15px] xl:text-[16px] font-semibold transition-colors duration-200 ${active ? "text-[#FFB71B]" : "text-[#061225]/85 hover:text-[#FFB71B]"
+                  }`}
               >
                 {link.label}
               </Link>

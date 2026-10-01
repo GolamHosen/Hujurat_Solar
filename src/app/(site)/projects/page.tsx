@@ -30,7 +30,7 @@ export default async function ProjectsPage() {
             Explore real Hujurat Solar installations featuring actual system details, installation photos
             and genuine customer results &mdash; real systems delivering real-world savings.
           </p>
-          <span className="mt-4 inline-flex items-center gap-1 text-md font-semibold text-brand-dark">
+          <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-dark">
             Your Home Could Be Next
           </span>
         </div>

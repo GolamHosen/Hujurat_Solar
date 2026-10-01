@@ -46,7 +46,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: siteConfig.name,
     url: siteConfig.url,
-    logo: absoluteUrl("/logo.png"),
+    logo: absoluteUrl("/solar-logo.png"),
     sameAs: siteConfig.sameAs,
     contactPoint: [
       {
@@ -302,7 +302,7 @@ export function articleSchema(params: {
     publisher: {
       "@type": "Organization",
       name: siteConfig.name,
-      logo: { "@type": "ImageObject", url: absoluteUrl("/logo.png") },
+      logo: { "@type": "ImageObject", url: absoluteUrl("/solar-logo.png") },
     },
     mainEntityOfPage: absoluteUrl(params.path),
   };

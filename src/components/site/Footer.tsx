@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="section-container grid gap-10 py-16 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt={siteConfig.shortName} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" />
+            <Image src="/solar-logo.png" alt={siteConfig.shortName} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" />
             <span className="font-display text-lg font-extrabold text-white">Hujurat Solar</span>
           </div>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">{siteConfig.description}</p>

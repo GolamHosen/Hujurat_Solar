@@ -86,6 +86,6 @@ export const config = {
    * headers are set in next.config.ts.
    */
   matcher: [
-    "/((?!api/|_next/|images/|uploads/|favicon.ico|logo.png|site.webmanifest|robots.txt|sitemap.xml).*)",
+    "/((?!api/|_next/|images/|uploads/|favicon.ico|solar-logo.png|site.webmanifest|robots.txt|sitemap.xml).*)",
   ],
 };
