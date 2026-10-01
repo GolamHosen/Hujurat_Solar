@@ -19,7 +19,12 @@ import {
   VolumeX,
 } from "lucide-react";
 
-export default function Hero() {
+interface HeroProps {
+  averageRating?: number;
+  reviewCount?: number;
+}
+
+export default function Hero({ averageRating = 5.0, reviewCount = 0 }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -482,7 +487,7 @@ export default function Hero() {
               <Home className="h-8 w-8 text-[#FFB71B] stroke-[1.8]" />
               <div>
                 <span className="font-display text-sm font-bold text-[#FFFFFF] sm:text-base">
-                  500+ Installs
+                  36+ Installs
                 </span>
                 <span className="block text-[11px] text-[#94A3B8] sm:text-xs">
                   Across Sydney
@@ -492,15 +497,15 @@ export default function Hero() {
 
             <div className="hidden h-9 w-[1px] bg-[#263247] sm:block" />
 
-            {/* 5.0 Rating */}
+            {/* Dynamic Rating */}
             <div className="flex items-center gap-3.5">
               <Star className="h-8 w-8 text-[#FFB71B] stroke-[1.8]" />
               <div>
                 <span className="font-display text-sm font-bold text-[#FFFFFF] sm:text-base">
-                  5.0 Rating
+                  {averageRating.toFixed(1)} Rating
                 </span>
                 <span className="block text-[11px] text-[#94A3B8] sm:text-xs">
-                  Google &amp; Trustpilot
+                  {reviewCount > 0 ? `${reviewCount} Review${reviewCount !== 1 ? 's' : ''}` : 'Google & Trustpilot'}
                 </span>
               </div>
             </div>

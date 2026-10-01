@@ -50,7 +50,7 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={jsonLdData.filter((item): item is Record<string, unknown> => item !== null)} />
-      <Hero />
+      <Hero averageRating={averageRating} reviewCount={reviewCount} />
       <EnergyFlow />
       <ServicesGrid services={services} />
       <FeaturedProjects projects={featuredProjects} />
