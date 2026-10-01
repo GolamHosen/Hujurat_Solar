@@ -23,12 +23,16 @@ export default async function ProjectsPage() {
         <div className="max-w-2xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-dark">Project portfolio</p>
           <h1 className="mt-3 font-display text-4xl font-extrabold text-slate-950 sm:text-5xl">
-            Real solar installations, real results
+            See What Real Solar Can Do
           </h1>
           <p className="mt-5 text-slate-600">
-            Every project below is a genuine Hujurat Solar installation, complete with system specifications,
-            photos and customer outcomes — not stock imagery.
+            Thinking about going solar? See how we&rsquo;ve helped homes and businesses across Sydney.
+            Explore real Hujurat Solar installations featuring actual system details, installation photos
+            and genuine customer results &mdash; real systems delivering real-world savings.
           </p>
+          <span className="mt-4 inline-flex items-center gap-1 text-md font-semibold text-brand-dark">
+            Your Home Could Be Next
+          </span>
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
