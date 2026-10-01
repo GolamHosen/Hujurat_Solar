@@ -75,6 +75,7 @@ function mapProject(row: typeof projects.$inferSelect): Project {
     systemSizeKw: toNumber(row.systemSizeKw),
     batterySizeKwh: toNumber(row.batterySizeKwh),
     featured: row.featured,
+    locationId: row.locationId ? String(row.locationId) : null,
     status: row.status,
     publishedAt: toIso(row.publishedAt),
     updatedAt: row.updatedAt.toISOString(),

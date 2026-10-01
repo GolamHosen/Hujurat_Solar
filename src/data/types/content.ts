@@ -27,6 +27,7 @@ export type Project = {
   systemSizeKw: number | null;
   batterySizeKwh: number | null;
   featured: boolean;
+  locationId: string | null;
   status: ContentStatus;
   publishedAt: string | null;
   updatedAt: string;
@@ -43,7 +44,6 @@ export type ProjectDetail = Project & {
   panelBrand: string | null;
   inverterBrand: string | null;
   batteryBrand: string | null;
-  locationId: string | null;
   gallery: Image[];
   videos: VideoRef[];
   customerTestimonial: string | null;
