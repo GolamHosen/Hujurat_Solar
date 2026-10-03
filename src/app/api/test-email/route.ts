@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isSmtpConfigured, verifySmtpConnection, sendLeadNotificationToAdmin } from "@/lib/email";
+import { isSmtpConfigured, verifySmtpConnection, sendLeadNotificationToAdmin, getCleanEnv } from "@/lib/email";
 import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
       configured: false,
       message: "SMTP is not configured. Missing SMTP_HOST, SMTP_USER, or SMTP_PASS.",
       environmentVariables: {
-        SMTP_HOST: process.env.SMTP_HOST || "(not set)",
-        SMTP_PORT: process.env.SMTP_PORT || "(default 465)",
-        SMTP_SECURE: process.env.SMTP_SECURE || "(default true)",
-        SMTP_USER: process.env.SMTP_USER || "(not set)",
-        SMTP_PASS: process.env.SMTP_PASS ? "(configured)" : "(not set)",
-        SMTP_FROM: process.env.SMTP_FROM || "(not set)",
-        SMTP_TO: process.env.SMTP_TO || "(not set)",
+        SMTP_HOST: getCleanEnv("SMTP_HOST") || "(not set)",
+        SMTP_PORT: getCleanEnv("SMTP_PORT") || "(default 465)",
+        SMTP_SECURE: getCleanEnv("SMTP_SECURE") || "(default true)",
+        SMTP_USER: getCleanEnv("SMTP_USER") || "(not set)",
+        SMTP_PASS: getCleanEnv("SMTP_PASS") ? "(configured)" : "(not set)",
+        SMTP_FROM: getCleanEnv("SMTP_FROM") || "(not set)",
+        SMTP_TO: getCleanEnv("SMTP_TO") || "(not set)",
       },
     });
   }
@@ -39,9 +39,9 @@ export async function GET(request: NextRequest) {
     ok: result.ok,
     configured: true,
     message: result.message,
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT || 465,
-    user: process.env.SMTP_USER,
+    host: getCleanEnv("SMTP_HOST"),
+    port: getCleanEnv("SMTP_PORT") || 465,
+    user: getCleanEnv("SMTP_USER"),
   });
 }
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
   const testResult = await sendLeadNotificationToAdmin({
     name: "Test Customer",
-    email: process.env.SMTP_USER || "test@example.com",
+    email: getCleanEnv("SMTP_USER") || "test@example.com",
     phone: "0468 209 407",
     suburb: "Parramatta",
     propertyType: "residential",

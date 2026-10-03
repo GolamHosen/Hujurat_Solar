@@ -21,16 +21,45 @@ const MAX_BODY_BYTES = 32 * 1024;
 
 function isSameOrigin(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
-  if (!origin) return false;
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host");
 
-  const host = request.headers.get("host");
-  if (!host) return false;
+  if (!host) return true;
 
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false;
+  const normalize = (h: string) => h.replace(/^www\./, "").toLowerCase().split(":")[0];
+  const targetHost = normalize(host);
+
+  if (origin) {
+    try {
+      const originHost = normalize(new URL(origin).host);
+      if (originHost === targetHost) return true;
+      if (process.env.NEXT_PUBLIC_SITE_URL) {
+        const siteHost = normalize(new URL(process.env.NEXT_PUBLIC_SITE_URL).host);
+        if (originHost === siteHost) return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
   }
+
+  const referer = request.headers.get("referer");
+  if (referer) {
+    try {
+      const refererHost = normalize(new URL(referer).host);
+      if (refererHost === targetHost) return true;
+      if (process.env.NEXT_PUBLIC_SITE_URL) {
+        const siteHost = normalize(new URL(process.env.NEXT_PUBLIC_SITE_URL).host);
+        if (refererHost === siteHost) return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export async function POST(request: NextRequest) {
@@ -84,10 +113,17 @@ export async function POST(request: NextRequest) {
       source: data.source,
     });
 
-    // Trigger SMTP emails in background without blocking API response
-    sendLeadEmails(data).catch((emailError) => {
+    // In serverless production environments (Vercel, AWS Lambda), un-awaited background
+    // promises are terminated as soon as the response is returned.
+    // We MUST await email delivery so the execution context stays alive until Nodemailer finishes.
+    try {
+      const emailResult = await sendLeadEmails(data);
+      if (!emailResult.adminSent) {
+        console.warn("[api/leads] Warning: Admin notification email could not be sent:", emailResult.adminError);
+      }
+    } catch (emailError) {
       console.error("[api/leads] Error dispatching lead emails:", emailError);
-    });
+    }
 
     // Never echo the stored row: it holds PII and internal identifiers.
     return NextResponse.json({ ok: true }, { status: 201 });

@@ -1,6 +1,8 @@
 import { Users, Mail, Phone, MapPin, Zap, Battery, Trash2, Calendar, CheckCircle2 } from "lucide-react";
 import { getAllLeads } from "@/lib/queries";
 import { updateLeadStatusAction, deleteLeadAction } from "@/lib/actions/leads";
+import { isSmtpConfigured, getCleanEnv } from "@/lib/email";
+import SmtpStatusBanner from "@/components/dashboard/SmtpStatusBanner";
 
 const STATUS_CONFIG: Record<
   string,
@@ -22,6 +24,10 @@ export default async function DashboardLeadsPage() {
   const quoteSent = leads.filter((l) => l.status === "quote_sent").length;
   const won = leads.filter((l) => l.status === "won").length;
 
+  const smtpActive = isSmtpConfigured();
+  const smtpHost = getCleanEnv("SMTP_HOST");
+  const smtpUser = getCleanEnv("SMTP_USER");
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -34,6 +40,13 @@ export default async function DashboardLeadsPage() {
           </p>
         </div>
       </div>
+
+      {/* SMTP Email Delivery Status & Diagnostics */}
+      <SmtpStatusBanner
+        isConfigured={smtpActive}
+        smtpHost={smtpHost}
+        smtpUser={smtpUser}
+      />
 
       {/* KPI Cards */}
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">

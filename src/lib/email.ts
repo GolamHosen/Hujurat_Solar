@@ -19,52 +19,70 @@ export interface LeadEmailPayload {
 let cachedTransporter: Transporter | null = null;
 
 /**
+ * Safely reads an environment variable, trimming whitespace and stripping any accidental
+ * surrounding quotes (e.g. when copied into Vercel/cloud dashboards).
+ */
+export function getCleanEnv(key: string): string {
+  const val = process.env[key];
+  if (!val) return "";
+  let trimmed = val.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    trimmed = trimmed.slice(1, -1).trim();
+  }
+  return trimmed;
+}
+
+/**
  * Checks whether SMTP environment variables are configured.
  */
 export function isSmtpConfigured(): boolean {
   return Boolean(
-    process.env.SMTP_HOST &&
-    process.env.SMTP_USER &&
-    process.env.SMTP_PASS
+    getCleanEnv("SMTP_HOST") &&
+    getCleanEnv("SMTP_USER") &&
+    getCleanEnv("SMTP_PASS")
   );
 }
 
 /**
- * Creates or retrieves the cached Nodemailer Transporter.
+ * Creates or retrieves the Nodemailer Transporter.
+ * In serverless environments (such as Vercel / AWS Lambda), connection pooling (`pool: true`)
+ * causes socket freezes and dead connections between invocations. Direct connections (`pool: false`)
+ * ensure reliable delivery.
  */
 export function getMailTransporter(): Transporter | null {
   if (!isSmtpConfigured()) {
     return null;
   }
 
-  if (cachedTransporter) {
-    return cachedTransporter;
-  }
-
-  const port = Number(process.env.SMTP_PORT) || 465;
-  const isSecure = process.env.SMTP_SECURE !== undefined
-    ? process.env.SMTP_SECURE === "true" || process.env.SMTP_SECURE === "1"
+  const host = getCleanEnv("SMTP_HOST");
+  const rawPort = getCleanEnv("SMTP_PORT");
+  const port = Number(rawPort) || 465;
+  const secureEnv = getCleanEnv("SMTP_SECURE");
+  const isSecure = secureEnv !== ""
+    ? secureEnv === "true" || secureEnv === "1"
     : port === 465;
 
-  cachedTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
+  const user = getCleanEnv("SMTP_USER");
+  const pass = getCleanEnv("SMTP_PASS");
+
+  return nodemailer.createTransport({
+    host,
     port,
     secure: isSecure,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user,
+      pass,
     },
-    // Pool connections in Node environments
-    pool: true,
-    maxConnections: 3,
-    maxMessages: 50,
-    // Sensible network timeouts to prevent hanging on serverless
+    // Avoid socket pooling in serverless environments:
+    // Pooled connections freeze during container sleep and fail on subsequent requests.
+    pool: false,
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 15000,
   });
-
-  return cachedTransporter;
 }
 
 /**
@@ -90,15 +108,13 @@ export async function sendLeadNotificationToAdmin(lead: LeadEmailPayload): Promi
     return { success: false, error: "SMTP not configured" };
   }
 
-  const to = process.env.SMTP_TO || siteConfig.email;
+  const userEmail = getCleanEnv("SMTP_USER") || siteConfig.email || "services@hujurat.com.au";
+  const to = getCleanEnv("SMTP_TO") || userEmail;
 
   // Extract the authenticated email address (e.g. services@hujurat.com.au)
-  const rawFrom = process.env.SMTP_FROM || "";
+  const rawFrom = getCleanEnv("SMTP_FROM");
   const fromMatch = rawFrom.match(/<([^>]+)>/);
-  const systemEmail = (fromMatch ? fromMatch[1].trim() : null) ||
-    process.env.SMTP_USER ||
-    siteConfig.email ||
-    "services@hujurat.com.au";
+  const systemEmail = (fromMatch ? fromMatch[1].trim() : null) || userEmail;
 
   // Sanitize the submitter's name so it can be safely used in the RFC 5322 From header
   const cleanCustomerName = (lead.name || "").replace(/["\r\n\\]/g, "").trim();
@@ -106,7 +122,7 @@ export async function sendLeadNotificationToAdmin(lead: LeadEmailPayload): Promi
   // Show the exact customer name who submitted the form from your website as the sender in your mailbox
   const from = cleanCustomerName
     ? `"${cleanCustomerName}" <${systemEmail}>`
-    : (process.env.SMTP_FROM || `"${siteConfig.shortName}" <${systemEmail}>`);
+    : (rawFrom || `"${siteConfig.shortName}" <${systemEmail}>`);
 
   const safeName = escapeHtml(lead.name);
   const safeEmail = escapeHtml(lead.email);
@@ -262,7 +278,11 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
     return { success: false, error: "SMTP not configured" };
   }
 
-  const from = process.env.SMTP_FROM || `"${siteConfig.shortName}" <${process.env.SMTP_USER}>`;
+  const userEmail = getCleanEnv("SMTP_USER") || siteConfig.email || "services@hujurat.com.au";
+  const rawFrom = getCleanEnv("SMTP_FROM");
+  const fromMatch = rawFrom.match(/<([^>]+)>/);
+  const systemEmail = (fromMatch ? fromMatch[1].trim() : null) || userEmail;
+  const from = rawFrom || `"${siteConfig.shortName}" <${systemEmail}>`;
   const safeName = escapeHtml(lead.name);
   const safeService = escapeHtml(lead.interestedService || "solar and battery solutions");
 
@@ -371,9 +391,14 @@ https://www.hujuratsolar.com.au
 export async function sendLeadEmails(lead: LeadEmailPayload): Promise<{
   adminSent: boolean;
   clientSent: boolean;
+  adminError?: string;
+  clientError?: string;
 }> {
   if (!isSmtpConfigured()) {
-    return { adminSent: false, clientSent: false };
+    console.warn(
+      "[email] SMTP is not configured in this environment (missing SMTP_HOST, SMTP_USER, or SMTP_PASS). Skipping email dispatch."
+    );
+    return { adminSent: false, clientSent: false, adminError: "SMTP not configured" };
   }
 
   const [adminResult, clientResult] = await Promise.allSettled([
@@ -383,8 +408,17 @@ export async function sendLeadEmails(lead: LeadEmailPayload): Promise<{
 
   const adminSent = adminResult.status === "fulfilled" && adminResult.value.success;
   const clientSent = clientResult.status === "fulfilled" && clientResult.value.success;
+  const adminError = adminResult.status === "fulfilled" ? adminResult.value.error : String(adminResult.reason);
+  const clientError = clientResult.status === "fulfilled" ? clientResult.value.error : String(clientResult.reason);
 
-  return { adminSent, clientSent };
+  if (!adminSent) {
+    console.error("[email] Admin lead email notification failed:", adminError);
+  }
+  if (!clientSent) {
+    console.warn("[email] Client confirmation email failed:", clientError);
+  }
+
+  return { adminSent, clientSent, adminError, clientError };
 }
 
 /**
