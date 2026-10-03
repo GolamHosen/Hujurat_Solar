@@ -294,21 +294,18 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
   <title>Thank You for Contacting Hujurat Solar</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px; color: #1e293b; }
-    .container { max-width: 580px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; }
-    .header { background-color: #020617; padding: 32px; text-align: center; }
+    .container { max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; }
+    .header { background-color: #020617; padding: 28px 32px; text-align: center; }
     .header h1 { margin: 0; font-size: 22px; font-weight: 800; color: #ffffff; }
     .header p { margin: 6px 0 0; font-size: 13px; color: #f59e0b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
     .content { padding: 32px; line-height: 1.6; }
     .greeting { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 12px; }
-    .card { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 20px 0; }
-    .card h4 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #0f172a; }
-    .steps { padding-left: 20px; margin: 10px 0; font-size: 14px; color: #475569; }
-    .steps li { margin-bottom: 8px; }
-    .contact-box { background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; padding: 18px; margin-top: 24px; }
+    .message { font-size: 15px; color: #334155; line-height: 1.6; margin-bottom: 24px; }
+    .contact-box { background-color: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; padding: 18px 20px; margin-top: 24px; }
     .contact-box p { margin: 0 0 8px; font-size: 13px; color: #92400e; font-weight: 600; }
     .contact-numbers { font-size: 14px; color: #78350f; }
     .contact-numbers a { color: #b45309; font-weight: 700; text-decoration: none; }
-    .footer { background-color: #f1f5f9; padding: 20px; font-size: 12px; color: #64748b; text-align: center; }
+    .footer { background-color: #f1f5f9; padding: 18px; font-size: 12px; color: #64748b; text-align: center; }
   </style>
 </head>
 <body>
@@ -319,21 +316,12 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
     </div>
     <div class="content">
       <div class="greeting">Hi ${safeName},</div>
-      <p>Thank you for requesting a quote with <strong>Hujurat Solar</strong> regarding <strong>${safeService}</strong>.</p>
-      
-      <p>We have successfully received your enquiry. Our solar and energy storage specialists are currently reviewing your property details to tailor an optimal, high-efficiency solar proposal for you.</p>
-
-      <div class="card">
-        <h4>What happens next?</h4>
-        <ol class="steps">
-          <li><strong>Satellite Roof &amp; Solar Analysis:</strong> We inspect your roof orientation, shading, and local solar exposure.</li>
-          <li><strong>Custom System Design:</strong> We size an appropriate solar panel &amp; battery configuration tailored to your quarterly bill.</li>
-          <li><strong>Direct Contact:</strong> A solar specialist will reach out within <strong>one business day</strong> with transparent pricing and payback estimates.</li>
-        </ol>
-      </div>
+      <p class="message">
+        We have successfully received your inquiry. Our solar and energy storage experts are currently reviewing your mail. We will contact you very soon.
+      </p>
 
       <div class="contact-box">
-        <p>Need urgent assistance or want to talk to an installer immediately?</p>
+        <p>Need urgent assistance or have immediate questions?</p>
         <div class="contact-numbers">
           Office: <a href="tel:${siteConfig.phone}">${siteConfig.phoneDisplay}</a><br>
           Mobile: <a href="tel:${siteConfig.phoneMobile}">${siteConfig.phoneMobileDisplay}</a><br>
@@ -353,11 +341,9 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
   const text = `
 Hi ${lead.name},
 
-Thank you for reaching out to Hujurat Solar regarding ${lead.interestedService || "solar and battery installation"}.
+We have successfully received your inquiry. Our solar and energy storage experts are currently reviewing your mail. We will contact you very soon.
 
-We have received your enquiry. A member of our team will review your roof and energy requirements and contact you within one business day with a customized quote.
-
-If you have any questions in the meantime, feel free to call us:
+If you have any questions in the meantime, feel free to contact us:
 Office: ${siteConfig.phoneDisplay} (${siteConfig.phone})
 Mobile: ${siteConfig.phoneMobileDisplay} (${siteConfig.phoneMobile})
 Email: ${siteConfig.email}
