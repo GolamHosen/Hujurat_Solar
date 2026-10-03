@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { siteConfig } from "@/lib/site";
+import { createGoogleCalendarUrl, createIcsCalendarContent } from "@/lib/calendar";
 
 export interface LeadEmailPayload {
   name: string;
@@ -13,6 +14,9 @@ export interface LeadEmailPayload {
   systemSizeInterest?: string | null;
   batteryRequired?: boolean | null;
   message?: string | null;
+  preferredDate?: string | null;
+  preferredTimeSlot?: string | null;
+  consultationType?: string | null;
   source?: string | null;
 }
 
@@ -136,6 +140,37 @@ export async function sendLeadNotificationToAdmin(lead: LeadEmailPayload): Promi
   const safeSource = escapeHtml(lead.source || "Website Form");
   const submittedAt = new Date().toLocaleString("en-AU", { timeZone: "Australia/Sydney", dateStyle: "full", timeStyle: "short" });
 
+  const hasBooking = Boolean(lead.preferredDate);
+  const calendarEvent = {
+    title: `Solar Assessment & Consultation: ${lead.name}`,
+    description: `Hujurat Solar Consultation with ${lead.name}.\nContact: ${lead.phone} | ${lead.email}\nService: ${lead.interestedService || "Solar & Battery Package"}\nType: ${lead.consultationType || "On-Site Solar Assessment"}\nSuburb: ${lead.suburb}\nNotes: ${lead.message || "None"}`,
+    dateStr: lead.preferredDate || undefined,
+    timeSlot: lead.preferredTimeSlot || undefined,
+    location: lead.suburb ? `${lead.suburb}, NSW, Australia` : siteConfig.address,
+  };
+  const adminGoogleCalUrl = createGoogleCalendarUrl(calendarEvent);
+  const icsContent = createIcsCalendarContent(calendarEvent);
+
+  const bookingSectionHtml = hasBooking
+    ? `
+      <div class="section-title">Requested Consultation &amp; Assessment</div>
+      <table class="data-table">
+        <tr>
+          <td class="label">Consultation Type</td>
+          <td class="value"><strong>${escapeHtml(lead.consultationType || "On-Site Solar Assessment")}</strong></td>
+        </tr>
+        <tr>
+          <td class="label">Requested Date</td>
+          <td class="value"><span style="color: #16a34a; font-weight: 700;">📅 ${escapeHtml(lead.preferredDate)}</span></td>
+        </tr>
+        <tr>
+          <td class="label">Time Slot</td>
+          <td class="value">${escapeHtml(lead.preferredTimeSlot || "Flexible / Business Hours")}</td>
+        </tr>
+      </table>
+    `.trim()
+    : "";
+
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -160,6 +195,7 @@ export async function sendLeadNotificationToAdmin(lead: LeadEmailPayload): Promi
     .btn { display: inline-block; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; }
     .btn-call { background-color: #020617; color: #ffffff; }
     .btn-reply { background-color: #f59e0b; color: #020617; }
+    .btn-calendar { background-color: #16a34a; color: #ffffff; }
     .footer { background-color: #f8fafc; padding: 16px 32px; font-size: 12px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; }
   </style>
 </head>
@@ -190,6 +226,8 @@ export async function sendLeadNotificationToAdmin(lead: LeadEmailPayload): Promi
           <td class="value">${safeSuburb}</td>
         </tr>
       </table>
+
+      ${bookingSectionHtml}
 
       <div class="section-title">Property &amp; System Requirements</div>
       <table class="data-table">
@@ -222,7 +260,8 @@ export async function sendLeadNotificationToAdmin(lead: LeadEmailPayload): Promi
 
       <div style="margin-top: 24px;">
         <a href="tel:${safePhone}" class="btn btn-call" style="color: #ffffff; text-decoration: none; margin-right: 8px;">📞 Call ${safePhone}</a>
-        <a href="mailto:${safeEmail}?subject=Re: Your Solar Enquiry with Hujurat Solar" class="btn btn-reply" style="color: #020617; text-decoration: none;">✉️ Reply via Email</a>
+        <a href="mailto:${safeEmail}?subject=Re: Your Solar Enquiry with Hujurat Solar" class="btn btn-reply" style="color: #020617; text-decoration: none; margin-right: 8px;">✉️ Reply via Email</a>
+        ${hasBooking ? `<a href="${adminGoogleCalUrl}" target="_blank" class="btn btn-calendar" style="color: #ffffff; text-decoration: none;">📅 Add to Google Calendar</a>` : ""}
       </div>
     </div>
     <div class="footer">
@@ -244,6 +283,8 @@ Property: ${lead.propertyType || "Residential"}
 Service: ${lead.interestedService || "General Enquiry"}
 Quarterly Bill: ${lead.electricityBill || "Not specified"}
 Battery Required: ${lead.batteryRequired ? "Yes" : "No"}
+${hasBooking ? `Requested Consultation: ${lead.preferredDate} (${lead.preferredTimeSlot || "Flexible"}) - ${lead.consultationType || "On-Site"}` : ""}
+${hasBooking ? `Add to Google Calendar: ${adminGoogleCalUrl}` : ""}
 Lead Source: ${lead.source || "Website Form"}
 
 Message:
@@ -260,6 +301,15 @@ Submitted: ${submittedAt}
       subject: `⚡ New Solar Lead: ${lead.name} (${lead.suburb}) - ${lead.email}`,
       text,
       html,
+      attachments: hasBooking
+        ? [
+            {
+              filename: "solar-consultation.ics",
+              content: icsContent,
+              contentType: "text/calendar; charset=utf-8; method=REQUEST",
+            },
+          ]
+        : [],
     });
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {
@@ -285,6 +335,36 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
   const from = rawFrom || `"${siteConfig.shortName}" <${systemEmail}>`;
   const safeName = escapeHtml(lead.name);
   const safeService = escapeHtml(lead.interestedService || "solar and battery solutions");
+
+  const hasBooking = Boolean(lead.preferredDate);
+  const calendarEvent = {
+    title: `Hujurat Solar Consultation (${lead.consultationType || "Assessment"})`,
+    description: `Your solar assessment & consultation with Hujurat Solar.\nType: ${lead.consultationType || "On-Site Solar Assessment"}\nService: ${lead.interestedService || "Solar & Battery Package"}\nPhone: ${siteConfig.phoneDisplay} / ${siteConfig.phoneMobileDisplay}\nEmail: ${siteConfig.email}`,
+    dateStr: lead.preferredDate || undefined,
+    timeSlot: lead.preferredTimeSlot || undefined,
+    location: lead.suburb ? `${lead.suburb}, NSW` : siteConfig.address,
+  };
+  const clientGoogleCalUrl = createGoogleCalendarUrl(calendarEvent);
+  const icsContent = createIcsCalendarContent(calendarEvent);
+
+  const bookingCardHtml = hasBooking
+    ? `
+      <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px 20px; margin: 20px 0;">
+        <p style="margin: 0 0 6px; font-size: 13px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.05em;">
+          📅 Requested Consultation Booking
+        </p>
+        <p style="margin: 0 0 4px; font-size: 14px; color: #14532d;">
+          <strong>Date:</strong> ${escapeHtml(lead.preferredDate)} ${lead.preferredTimeSlot ? `(${escapeHtml(lead.preferredTimeSlot)})` : ""}
+        </p>
+        <p style="margin: 0 0 14px; font-size: 14px; color: #14532d;">
+          <strong>Type:</strong> ${escapeHtml(lead.consultationType || "On-Site Solar Assessment")}
+        </p>
+        <a href="${clientGoogleCalUrl}" target="_blank" style="display: inline-block; background-color: #16a34a; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 8px;">
+          📅 Add to Google Calendar
+        </a>
+      </div>
+    `.trim()
+    : "";
 
   const html = `
 <!DOCTYPE html>
@@ -320,6 +400,8 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
         We have successfully received your inquiry. Our solar and energy storage experts are currently reviewing your mail. We will contact you very soon.
       </p>
 
+      ${bookingCardHtml}
+
       <div class="contact-box">
         <p>Need urgent assistance or have immediate questions?</p>
         <div class="contact-numbers">
@@ -342,7 +424,7 @@ export async function sendLeadConfirmationToUser(lead: LeadEmailPayload): Promis
 Hi ${lead.name},
 
 We have successfully received your inquiry. Our solar and energy storage experts are currently reviewing your mail. We will contact you very soon.
-
+${hasBooking ? `\nRequested Consultation:\nDate: ${lead.preferredDate} (${lead.preferredTimeSlot || "Flexible"})\nType: ${lead.consultationType || "On-Site"}\nAdd to Google Calendar:\n${clientGoogleCalUrl}\n` : ""}
 If you have any questions in the meantime, feel free to contact us:
 Office: ${siteConfig.phoneDisplay} (${siteConfig.phone})
 Mobile: ${siteConfig.phoneMobileDisplay} (${siteConfig.phoneMobile})
@@ -361,6 +443,15 @@ https://www.hujuratsolar.com.au
       subject: `Thank you for your enquiry | ${siteConfig.shortName}`,
       text,
       html,
+      attachments: hasBooking
+        ? [
+            {
+              filename: "hujurat-solar-consultation.ics",
+              content: icsContent,
+              contentType: "text/calendar; charset=utf-8; method=REQUEST",
+            },
+          ]
+        : [],
     });
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {

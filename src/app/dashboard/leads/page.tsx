@@ -3,6 +3,8 @@ import { getAllLeads } from "@/lib/queries";
 import { updateLeadStatusAction, deleteLeadAction } from "@/lib/actions/leads";
 import { isSmtpConfigured, getCleanEnv } from "@/lib/email";
 import SmtpStatusBanner from "@/components/dashboard/SmtpStatusBanner";
+import { createGoogleCalendarUrl } from "@/lib/calendar";
+import { siteConfig } from "@/lib/site";
 
 const STATUS_CONFIG: Record<
   string,
@@ -160,6 +162,33 @@ export default async function DashboardLeadsPage() {
                       </span>
                     )}
                   </div>
+
+                  {/* Consultation Booking & Google Calendar Link */}
+                  {lead.preferredDate && (
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-emerald-50/80 p-3 border border-emerald-200 text-xs">
+                      <div className="flex items-center gap-1.5 font-semibold text-emerald-950">
+                        <Calendar className="h-4 w-4 text-emerald-600 shrink-0" />
+                        <span>
+                          {lead.consultationType || "Assessment"}: {lead.preferredDate} {lead.preferredTimeSlot ? `(${lead.preferredTimeSlot})` : ""}
+                        </span>
+                      </div>
+                      <a
+                        href={createGoogleCalendarUrl({
+                          title: `Solar Assessment: ${lead.name}`,
+                          description: `Hujurat Solar Consultation with ${lead.name}.\nContact: ${lead.phone || "No phone"} | ${lead.email}\nService: ${lead.interestedService || "General"}\nType: ${lead.consultationType || "Assessment"}\nSuburb: ${lead.suburb || ""}`,
+                          dateStr: lead.preferredDate,
+                          timeSlot: lead.preferredTimeSlot || undefined,
+                          location: lead.suburb ? `${lead.suburb}, NSW, Australia` : siteConfig.address,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800 transition"
+                      >
+                        <Calendar className="h-3.5 w-3.5" />
+                        Add to Google Calendar
+                      </a>
+                    </div>
+                  )}
 
                   {/* Message */}
                   {lead.message && (

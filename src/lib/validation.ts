@@ -11,6 +11,9 @@ export const leadFormSchema = z.object({
   systemSizeInterest: z.string().optional().default(""),
   batteryRequired: z.boolean().optional().default(false),
   message: z.string().max(2000).optional().default(""),
+  preferredDate: z.string().max(60).optional().default(""),
+  preferredTimeSlot: z.string().max(60).optional().default(""),
+  consultationType: z.string().max(60).optional().default("On-Site Solar Assessment"),
   source: z
     .enum(["google_organic", "google_ads", "facebook", "instagram", "referral", "direct", "other"])
     .optional()

@@ -110,6 +110,9 @@ export async function POST(request: NextRequest) {
       systemSizeInterest: data.systemSizeInterest,
       batteryRequired: data.batteryRequired,
       message: data.message,
+      preferredDate: data.preferredDate || null,
+      preferredTimeSlot: data.preferredTimeSlot || null,
+      consultationType: data.consultationType || null,
       source: data.source,
     });
 
