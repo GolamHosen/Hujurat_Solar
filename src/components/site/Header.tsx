@@ -11,6 +11,7 @@ import { useQuoteModal } from "@/components/forms/QuoteModalContext";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
+  { label: "Pricing", href: "/pricing" },
   { label: "Locations", href: "/locations" },
   { label: "Projects", href: "/projects" },
   { label: "Solar Calculator", href: "/solar-calculator" },

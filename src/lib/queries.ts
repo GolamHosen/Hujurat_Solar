@@ -11,6 +11,7 @@ import {
   testimonials,
   leads,
   media,
+  pricingPlans,
 } from "@/db/schema";
 import { and, desc, eq, sql } from "drizzle-orm";
 
@@ -139,6 +140,8 @@ export const getDashboardStats = cache(
         [blogCount],
         [serviceCount],
         [locationCount],
+        [pricingCount],
+        [publishedPricingCount],
       ] = await Promise.all([
         db.select({ count: sql<number>`count(*)::int` }).from(projects),
         db.select({ count: sql<number>`count(*)::int` }).from(projects).where(eq(projects.status, "published")),
@@ -147,6 +150,8 @@ export const getDashboardStats = cache(
         db.select({ count: sql<number>`count(*)::int` }).from(blogPosts).where(eq(blogPosts.status, "published")),
         db.select({ count: sql<number>`count(*)::int` }).from(services).where(eq(services.status, "published")),
         db.select({ count: sql<number>`count(*)::int` }).from(locations).where(eq(locations.status, "published")),
+        db.select({ count: sql<number>`count(*)::int` }).from(pricingPlans),
+        db.select({ count: sql<number>`count(*)::int` }).from(pricingPlans).where(eq(pricingPlans.status, "published")),
       ]);
 
       return {
@@ -157,9 +162,28 @@ export const getDashboardStats = cache(
         publishedBlogPosts: blogCount?.count ?? 0,
         publishedServices: serviceCount?.count ?? 0,
         publishedLocations: locationCount?.count ?? 0,
+        totalPricingPlans: pricingCount?.count ?? 0,
+        publishedPricingPlans: publishedPricingCount?.count ?? 0,
       };
     },
     ["dashboard-stats"],
-    { tags: ["dashboard-stats", "projects", "leads", "posts", "services", "locations"], revalidate: 30 }
+    { tags: ["dashboard-stats", "projects", "leads", "posts", "services", "locations", "pricing"], revalidate: 30 }
   )
 );
+
+export const getPublishedPricingPlans = cache(async function getPublishedPricingPlans() {
+  return db
+    .select()
+    .from(pricingPlans)
+    .where(eq(pricingPlans.status, "published"))
+    .orderBy(pricingPlans.order, pricingPlans.title);
+});
+
+export const getAllPricingPlans = cache(async function getAllPricingPlans() {
+  return db.select().from(pricingPlans).orderBy(pricingPlans.order, pricingPlans.title);
+});
+
+export const getPricingPlanById = cache(async function getPricingPlanById(id: number) {
+  const rows = await db.select().from(pricingPlans).where(eq(pricingPlans.id, id)).limit(1);
+  return rows[0] ?? null;
+});

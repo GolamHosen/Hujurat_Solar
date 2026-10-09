@@ -186,3 +186,45 @@ export const media = pgTable("media", {
   caption: varchar("caption", { length: 255 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const pricingPlans = pgTable("pricing_plans", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 160 }).notNull().unique(),
+  title: varchar("title", { length: 200 }).notNull(),
+  subtitle: varchar("subtitle", { length: 255 }),
+  description: text("description"),
+  /** Display price string, e.g. "$4,990" or "From $3,490" */
+  price: varchar("price", { length: 60 }).notNull().default(""),
+  /** Optional price suffix, e.g. "/system", "per kW", "onwards" */
+  priceSuffix: varchar("price_suffix", { length: 60 }),
+  /** Optional original/strikethrough price for showing discounts */
+  originalPrice: varchar("original_price", { length: 60 }),
+  /** Badge text, e.g. "Most Popular", "Best Value", "Premium" */
+  badge: varchar("badge", { length: 60 }),
+  /** Hero/card image for this plan */
+  image: text("image"),
+  /** CTA button text */
+  ctaText: varchar("cta_text", { length: 80 }).notNull().default("Get a Free Quote"),
+  /** CTA button link */
+  ctaLink: varchar("cta_link", { length: 255 }).notNull().default("/contact"),
+  /** JSON array of feature strings, e.g. ["6.6kW System","25-Year Warranty"] */
+  features: text("features").notNull().default("[]"),
+  /** JSON array of highlight/specification objects, e.g. [{"label":"Panels","value":"16x 415W"}] */
+  specifications: text("specifications").notNull().default("[]"),
+  /** System size for quick reference */
+  systemSizeKw: varchar("system_size_kw", { length: 20 }),
+  /** Number of panels */
+  panelCount: varchar("panel_count", { length: 20 }),
+  /** Panel brand */
+  panelBrand: varchar("panel_brand", { length: 120 }),
+  /** Inverter brand */
+  inverterBrand: varchar("inverter_brand", { length: 120 }),
+  /** Whether this plan is highlighted / popular */
+  featured: boolean("featured").notNull().default(false),
+  order: integer("order").notNull().default(0),
+  seoTitle: varchar("seo_title", { length: 255 }),
+  seoDescription: text("seo_description"),
+  status: contentStatusEnum("status").notNull().default("draft"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});

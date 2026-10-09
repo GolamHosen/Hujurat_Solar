@@ -104,7 +104,10 @@ export default function Footer() {
           <p>
             © {year} {siteConfig.name}. All rights reserved. CEC-accredited solar retailer &amp; installer.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
+            <Link href="/pricing" className="hover:text-brand">
+              Pricing Packages
+            </Link>
             <Link href="/book-consultation" className="hover:text-brand">
               Book Consultation
             </Link>

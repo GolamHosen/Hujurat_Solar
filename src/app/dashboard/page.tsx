@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FolderKanban, Users, Newspaper, Wrench, MapPin, ArrowUpRight } from "lucide-react";
+import { FolderKanban, Users, Newspaper, Wrench, MapPin, DollarSign, ArrowUpRight } from "lucide-react";
 import { getDashboardStats, getAllLeads, getAllProjects } from "@/lib/queries";
 
 export default async function DashboardOverviewPage() {
@@ -11,6 +11,7 @@ export default async function DashboardOverviewPage() {
   const cards = [
     { label: "Total Projects", value: stats.totalProjects, sub: `${stats.publishedProjects} published`, icon: FolderKanban, href: "/dashboard/projects" },
     { label: "Total Leads", value: stats.totalLeads, sub: `${stats.newLeads} new`, icon: Users, href: "/dashboard/leads" },
+    { label: "Pricing Packages", value: stats.totalPricingPlans, sub: `${stats.publishedPricingPlans} published`, icon: DollarSign, href: "/dashboard/pricing" },
     { label: "Published Blog Posts", value: stats.publishedBlogPosts, sub: "SEO content", icon: Newspaper, href: "/dashboard/blog" },
     { label: "Published Services", value: stats.publishedServices, sub: "Live on site", icon: Wrench, href: "/dashboard/services" },
     { label: "Published Locations", value: stats.publishedLocations, sub: "Local SEO pages", icon: MapPin, href: "/dashboard/locations" },
@@ -21,7 +22,7 @@ export default async function DashboardOverviewPage() {
       <h1 className="font-display text-2xl font-bold text-slate-950">Dashboard Overview</h1>
       <p className="mt-1 text-sm text-slate-500">A snapshot of your solar business platform.</p>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {cards.map((card) => (
           <Link key={card.label} href={card.href} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:shadow-md">
             <card.icon className="h-5 w-5 text-brand-dark" />
