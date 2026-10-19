@@ -91,6 +91,45 @@ h1, h2, h3, h4, .font-display {
   margin-bottom: 0.5em;
   color: #0b1220;
 }
+.prose-hujurat strong {
+  font-weight: 700;
+  color: #0f172a;
+}
+.prose-hujurat em {
+  font-style: italic;
+}
+.prose-hujurat ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.prose-hujurat ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.prose-hujurat li {
+  margin-top: 0.35em;
+  margin-bottom: 0.35em;
+}
+.prose-hujurat a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-hujurat a:hover {
+  color: #1d4ed8;
+}
+.prose-hujurat blockquote {
+  border-left: 3px solid #e2e8f0;
+  padding-left: 1em;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  color: #475569;
+  font-style: italic;
+}
 
 /*
  * Respect the user's OS-level motion preference.

@@ -7,6 +7,7 @@ import JsonLd from "@/components/site/JsonLd";
 import { getPostBySlug, getPosts } from "@/data/cms";
 import { buildMetadata, articleSchema } from "@/lib/seo";
 import { formatLongDate } from "@/lib/format";
+import MarkdownContent from "@/components/site/MarkdownContent";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -60,9 +61,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
         )}
 
-        <div className="prose-hujurat mt-10 max-w-none whitespace-pre-wrap">
-          {post.content}
-        </div>
+        <MarkdownContent content={post.content} />
 
         {post.tags && post.tags.length > 0 && (
           <div className="mt-8 flex flex-wrap gap-2">
