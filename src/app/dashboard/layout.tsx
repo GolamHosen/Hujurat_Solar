@@ -15,6 +15,7 @@ import {
   LogOut,
   ExternalLink,
   Calendar,
+  Sparkles,
 } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { logoutAction } from "@/lib/actions/auth";
@@ -31,6 +32,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/leads", label: "Leads", icon: Users },
   { href: "/dashboard/calendar", label: "Calendar", icon: Calendar },
   { href: "/dashboard/seo", label: "SEO", icon: Search },
+  { href: "/dashboard/marketing", label: "Marketing", icon: Sparkles },
 ];
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {

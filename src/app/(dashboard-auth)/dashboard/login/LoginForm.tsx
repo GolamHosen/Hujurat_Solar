@@ -16,7 +16,7 @@ export default function LoginForm({ next }: { next: string }) {
   const [state, formAction, isPending] = useActionState(loginAction, initialState);
 
   return (
-    <form action={formAction} autoComplete="on" className="space-y-4">
+    <form action={formAction} autoComplete="on" className="space-y-4" suppressHydrationWarning>
       <input type="hidden" name="next" value={next} />
       <div>
         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">
@@ -30,6 +30,7 @@ export default function LoginForm({ next }: { next: string }) {
           autoComplete="username"
           maxLength={255}
           spellCheck={false}
+          suppressHydrationWarning
           className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none"
         />
       </div>
@@ -44,6 +45,7 @@ export default function LoginForm({ next }: { next: string }) {
           required
           autoComplete="current-password"
           maxLength={200}
+          suppressHydrationWarning
           className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-brand focus:outline-none"
         />
       </div>
@@ -55,6 +57,7 @@ export default function LoginForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={isPending}
+        suppressHydrationWarning
         className="w-full rounded-full bg-brand px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-brand-dark disabled:opacity-70"
       >
         {isPending ? "Signing in..." : "Sign in"}
