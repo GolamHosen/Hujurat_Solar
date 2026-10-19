@@ -34,7 +34,7 @@ export default async function BlogPage() {
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <Link key={post.id} href={`/blog/${post.slug}`} prefetch={true} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:shadow-lg">
-              <div className="relative h-44 w-full overflow-hidden">
+              <div className="relative aspect-[16/9] w-full overflow-hidden">
                 <Image src={post.coverImage?.url || "/images/project-residential.jpg"} alt={post.coverImage?.alt || post.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width:1024px) 33vw, 100vw" />
               </div>
               <div className="p-6">

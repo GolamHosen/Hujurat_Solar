@@ -55,15 +55,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <p className="mt-4 text-lg text-slate-600">{post.excerpt}</p>
 
         {post.coverImage && (
-          <div className="relative mt-8 h-72 w-full overflow-hidden rounded-2xl sm:h-96">
+          <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl">
             <Image src={post.coverImage.url} alt={post.coverImage.alt || post.title} fill preload className="object-cover" sizes="(min-width:1024px) 768px, 100vw" />
           </div>
         )}
 
-        <div className="prose-hujurat mt-10 max-w-none">
-          {post.content.split("\n\n").map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+        <div className="prose-hujurat mt-10 max-w-none whitespace-pre-wrap">
+          {post.content}
         </div>
 
         {post.tags && post.tags.length > 0 && (

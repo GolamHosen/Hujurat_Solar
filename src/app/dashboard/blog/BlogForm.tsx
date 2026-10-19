@@ -118,7 +118,7 @@ export default function BlogForm({
                 required
                 defaultValue={post?.content ?? ""}
                 placeholder="Write or paste your comprehensive solar article here...&#10;&#10;## Understanding Australian Solar Feed-in Tariffs&#10;Solar power in Sydney has evolved significantly..."
-                className="w-full font-sans rounded-xl border border-slate-300 p-4 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full font-sans rounded-xl border border-slate-300 p-4 text-sm leading-relaxed text-slate-900 placeholder:text-slate-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand whitespace-pre-wrap"
               />
             </div>
           </div>
